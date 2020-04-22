@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Maven详解（七）------ 创建Web工程以及插件原理 | Locqi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="Locqi,Locqi's Blog" />
+  
+  <meta name="description" content="目录 1、什么是 Maven 插件？　 2、配置编译插件 3、创建 Maven Web 工程 4、添加 tomcat 插件  正文[回到顶部](#jumpDirectory)   1、什么是 Maven 插件？  　　上一篇博客我们讲了 Maven 的生命周期，我们知道 Maven 的核心是生命周期，生命周期指定了 Maven 命令执行的流程顺序。但是真正实现流程的工程是由插件来完成的。 　　我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Maven详解（七）------ 创建Web工程以及插件原理">
+<meta property="og:url" content="https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/index.html">
+<meta property="og:site_name" content="Locqi">
+<meta property="og:description" content="目录 1、什么是 Maven 插件？　 2、配置编译插件 3、创建 Maven Web 工程 4、添加 tomcat 插件  正文[回到顶部](#jumpDirectory)   1、什么是 Maven 插件？  　　上一篇博客我们讲了 Maven 的生命周期，我们知道 Maven 的核心是生命周期，生命周期指定了 Maven 命令执行的流程顺序。但是真正实现流程的工程是由插件来完成的。 　　我们">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/project-Facets.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/uncheck-DynamicWebModule.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/project-Facets-create-superlink.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/modfiy-Faceted-Project.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/mavenWebProject-DirectoryTree.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/tomcat7-run.png?raw=true">
+<meta property="article:published_time" content="2018-09-19T02:12:50.000Z">
+<meta property="article:modified_time" content="2018-09-19T07:40:59.000Z">
+<meta property="article:author" content="Locqi">
+<meta property="article:tag" content="Maven技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/project-Facets.png?raw=true">
+  
+  
+    <link rel="icon" href="/favicon.jpg">
+  
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/locqi.com/css/style.css">
+
+  
+<script src="/locqi.com/js/pace.min.js"></script>
+
+  
+
+  
+  
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+      <header id="header">
+    <div id="banner"></div>
+    <div id="header-outer">
+        <div id="header-menu" class="header-menu-pos animated">
+            <div class="header-menu-container">
+                <a href="/locqi.com/" class="left">
+                    <span class="site-title">Locqi&#39;s Blog</span>
+                </a>
+                <nav id="header-menu-nav" class="right">
+                    
+                    <a  href="/locqi.com/">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/archives">
+                        <i class="fa fa-archive"></i>
+                        <span>Archives</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/favourite/time.html">
+                        <i class="fa fa-favourite"></i>
+                        <span>Time Machine</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/aboutme">
+                        <i class="fa fa-user"></i>
+                        <span>About</span>
+                    </a>
+                    
+                </nav>
+                <a class="mobile-header-menu-button">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        <div id="header-row">
+            <div id="logo">
+                <a href="/locqi.com/">
+                    <img src="/locqi.com/images/logo.jpg" alt="logo">
+                </a>
+            </div>
+            <div class="header-info">
+                <div id="header-title">
+                    
+                    <h2>
+                        Locqi&#39;s Blog
+                    </h2>
+                    
+                </div>
+                <div id="header-description">
+                    
+                    <h3>
+                        世间所有的相遇，都是久别重逢。
+                    </h3>
+                    
+                </div>
+            </div>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a title="Gitee" target="_blank" href="//gitee.com/locqi">
+                            <i class="fa fa-home fa-2x"></i></a>
+                    
+                        <a title="Github" target="_blank" href="//github.com/Locqi">
+                            <i class="fa fa-github fa-2x"></i></a>
+                    
+                        <a title="Weibo" target="_blank" href="//weibo.com/huhu359819176">
+                            <i class="fa fa-weibo fa-2x"></i></a>
+                    
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+      <div class="outer">
+        <section id="main" class="body-wrap"><article id="post-Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="post-title" itemprop="name">
+      Maven详解（七）------ 创建Web工程以及插件原理
+    </h1>
+    <div class="post-title-bar">
+      <ul>
+          
+              <li>
+                  <i class="fa fa-book"></i>
+                  
+                      <a href="/locqi.com/categories/Maven系列教程/">Maven系列教程</a>
+                  
+              </li>
+          
+        <li>
+          <i class="fa fa-calendar"></i>  2018-09-19
+        </li>
+        <li>
+          <i class="fa fa-eye"></i>
+          <span id="busuanzi_value_page_pv"></span>
+        </li>
+      </ul>
+    </div>
+  
+
+          
+      </header>
+    
+    <div class="article-entry post-content" itemprop="articleBody">
+      
+            
+            <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a><span id="jumpDirectory">目录</span></h2><ul>
+<li><a href="#1">1、什么是 Maven 插件？</a>　</li>
+<li><a href="#2">2、配置编译插件</a></li>
+<li><a href="#3">3、创建 Maven Web 工程</a></li>
+<li><a href="#4">4、添加 tomcat 插件</a></li>
+</ul>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="1">1、什么是 Maven 插件？</h3>
+</blockquote>
+<p>　　<code>上一篇博客</code>我们讲了 <a href="https://locqi.gitee.io/locqi.com/2018/09/18/Maven-Detailed-[6]-Maven-lifeCycle/" target="_blank" rel="noopener">Maven 的生命周期</a>，我们知道 Maven 的核心是生命周期，生命周期指定了 Maven 命令执行的流程顺序。但是真正实现流程的工程是由插件来完成的。</p>
+<p>　　我们也可以说 Maven 是一个执行插件的框架，每一个任务实际上都是有插件来完成。进一步说每个任务对应了一个插件目标（goal），每个插件会有一个或者多个目标，例如maven-compiler-plugin的compile目标用来编译位于src/main/java/目录下的主源码，testCompile目标用来编译位于src/test/java/目录下的测试源码。</p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="2、配置编译插件"><a href="#2、配置编译插件" class="headerlink" title="2、配置编译插件"></a><span id="2">2、配置编译插件</span></h3></blockquote>
+<p>　　一般我们创建一个 Maven 工程，就算指定了 JDK 的版本，但是你执行 update project 操作，一般 Maven 工程会自动恢复到默认的 JDK 版本，有可能是1.4，有可能是1.5（和 Maven 版本有关）。</p>
+<p>　　那么我们如何指定其 JDK 版本呢？在 pom.xml 中添加如下代码：
+　　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;build&gt;</span><br><span class="line">    &lt;plugins&gt;</span><br><span class="line">        &lt;!-- 编译插件，指定 JDK 的版本为1.7 --&gt;</span><br><span class="line">        &lt;plugin&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.maven.plugins&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;maven-compiler-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;configuration&gt;</span><br><span class="line">                &lt;source&gt;1.7&lt;&#x2F;source&gt;</span><br><span class="line">                &lt;target&gt;1.7&lt;&#x2F;target&gt;</span><br><span class="line">                &lt;encoding&gt;UTF-8&lt;&#x2F;encoding&gt;</span><br><span class="line">            &lt;&#x2F;configuration&gt;</span><br><span class="line">        &lt;&#x2F;plugin&gt;</span><br><span class="line">    &lt;&#x2F;plugins&gt;</span><br><span class="line">&lt;&#x2F;build&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　下面我们来添加一个 tomcat 插件，首先我们要知道如何创建 Maven Web 工程。</p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="3">3、创建 Maven Web 工程</h3>
+　　第一步：New maven project，注意打包方式为 war
+　　
+![create-Mave-WebProject.png](https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/create-Mave-WebProject.png?raw=true)
+</blockquote>
+<p>　　第二步：右击项目名，选择 properties，选择Project Facets<br>　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/project-Facets.png?raw=true" alt="project-Facets.png"><br>　　<br>　　第三步：将 Dynamic Web Module 取消，点击 Apply<br>　　<br>　　<img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/uncheck-DynamicWebModule.png?raw=true" alt="uncheck-DynamicWebModule.png"><br>　　<br>　　第四部：将 Dynamic Web Module 重新勾选，点击 下方生成的超链接</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/project-Facets-create-superlink.png?raw=true" alt="project-Facets-create-superlink.png"></p>
+<p>　　第五步：点击超链接，修改目录结构，然后点击 OK，创建 Maven Web 工程完成</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/modfiy-Faceted-Project.png?raw=true" alt="modfiy-Faceted-Project.png"></p>
+<p>　　创建的 Web 工程目录结构如下：</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/mavenWebProject-DirectoryTree.png?raw=true" alt="mavenWebProject-DirectoryTree.png"></p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="4">4、添加 tomcat 插件</h3>
+</blockquote>
+<p>　　我们在上面创建的 web 工程，可以输入  tomcat:run 来使用默认的 tomcat 插件去启动 web 工程，但是默认的插件版本有点低，我们可以手动添加插件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;build&gt;</span><br><span class="line">    &lt;plugins&gt;</span><br><span class="line">        &lt;!--配置tomcat 插件  --&gt;</span><br><span class="line">    &lt;plugin&gt;</span><br><span class="line">        &lt;groupId&gt;org.apache.tomcat.maven&lt;&#x2F;groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;tomcat7-maven-plugin&lt;&#x2F;artifactId&gt;</span><br><span class="line">        &lt;configuration&gt;</span><br><span class="line">            &lt;port&gt;8080&lt;&#x2F;port&gt;&lt;!--端口号  --&gt;</span><br><span class="line">            &lt;path&gt;&#x2F;&lt;&#x2F;path&gt;</span><br><span class="line">        &lt;&#x2F;configuration&gt;</span><br><span class="line">    &lt;&#x2F;plugin&gt;</span><br><span class="line">&lt;&#x2F;plugins&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　执行命令是输入：tomcat7:run</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/tomcat7-run.png?raw=true" alt="tomcat7-run.png"></p>
+<p><strong><code>那么Maven的继承和聚合是怎样的呢？</code></strong>请继续阅读<a href="https://locqi.gitee.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/" target="_blank" rel="noopener">下一篇文章</a>吧！</p>
+
+            <div class="post-copyright">
+    <div class="content">
+        <p>最后更新： 2018年09月19日 15:40</p>
+        <!--<p>原始链接： <a class="post-url" href="/locqi.com/2018/09/19/Maven-Detailed-%5B7%5D-Maven-createWebProject-and-plugin-principles/" title="Maven详解（七）------ 创建Web工程以及插件原理">https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/</a></p>-->
+        <footer>
+            <a href="https://locqi.github.io/locqi.com">
+                <img src="/locqi.com/images/logo.jpg" alt="Locqi">
+                Locqi
+            </a>
+        </footer>
+    </div>
+</div>
+
+      
+        
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;">赏</a>
+</div>
+
+<div id="reward" class="post-modal reward-lay">
+    <a class="close" href="javascript:;" id="reward-close">×</a>
+    <span class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        请我吃糖~
+        <i class="icon icon-quote-right"></i>
+    </span>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/locqi.com/images/wechat_code.jpg" alt="打赏二维码">
+        </div>
+        <div class="reward-select">
+            
+            <label class="reward-select-item checked" data-id="wechat" data-wechat="/locqi.com/images/wechat_code.jpg">
+                <img class="reward-select-item-wechat" src="/locqi.com/images/wechat.png" alt="微信">
+            </label>
+            
+            
+            <label class="reward-select-item" data-id="alipay" data-alipay="/locqi.com/images/alipay_code.jpg">
+                <img class="reward-select-item-alipay" src="/locqi.com/images/alipay.png" alt="支付宝">
+            </label>
+            
+        </div>
+    </div>
+</div>
+
+
+        
+    </div>
+    <footer class="article-footer">
+        
+        
+<div class="post-share">
+    <a href="javascript:;" id="share-sub" class="post-share-fab">
+        <i class="fa fa-share-alt"></i>
+    </a>
+    <div class="post-share-list" id="share-list">
+        <ul class="share-icons">
+          <li>
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/&title=《Maven详解（七）------ 创建Web工程以及插件原理》 — Locqi&pic=https://locqi.github.io/locqi.comimages/logo.jpg" data-title="微博">
+              <i class="fa fa-weibo"></i>
+            </a>
+          </li>
+          <li>
+            <a class="weixin share-sns" id="wxFab" href="javascript:;" data-title="微信">
+              <i class="fa fa-weixin"></i>
+            </a>
+          </li>
+          <li>
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/&title=《Maven详解（七）------ 创建Web工程以及插件原理》 — Locqi&source=没有最好只有更好" data-title="QQ">
+              <i class="fa fa-qq"></i>
+            </a>
+          </li>
+          <li>
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/" data-title="Facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+          </li>
+          <li>
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Maven详解（七）------ 创建Web工程以及插件原理》 — Locqi&url=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/&via=https://locqi.github.io/locqi.com" data-title="Twitter">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/" data-title="Google+">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        </ul>
+     </div>
+</div>
+<div class="post-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;" id="wxShare-close">×</a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/" alt="微信分享二维码">
+</div>
+
+<div class="mask"></div>
+
+        
+        <ul class="article-footer-menu">
+            
+            
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/locqi.com/tags/Maven技术/" class="color3">Maven技术</a>
+      
+  </li>
+
+        </ul>
+        
+    </footer>
+  </div>
+</article>
+
+
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#目录"><span class="post-toc-text">目录</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#正文"><span class="post-toc-text">正文</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1"><span class="post-toc-text">1、什么是 Maven 插件？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2、配置编译插件"><span class="post-toc-text">2、配置编译插件</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3"><span class="post-toc-text">3、创建 Maven Web 工程</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4"><span class="post-toc-text">4、添加 tomcat 插件</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+
+<nav id="article-nav">
+  
+    <a href="/locqi.com/2018/09/19/Maven-Detailed-%5B8%5D-Maven-Inheritance-and-aggregation/" id="article-nav-newer" class="article-nav-link-wrap">
+
+      <span class="article-nav-title">
+        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
+        
+          Maven详解（八）------ 继承和聚合
+        
+      </span>
+    </a>
+  
+  
+    <a href="/locqi.com/2018/09/18/Maven-Detailed-%5B6%5D-Maven-lifeCycle/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">Maven详解（六）------ 生命周期</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
+  
+</nav>
+
+
+
+    
+        <section id="comments">
+            <div id="disqus_thread">
+                <script type="text/javascript">
+                    var disqus_shortname = 'Locqi';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+            </div>
+        </section>
+    
+</section>
+        
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+      <p>
+      <span class="footer__copyright">
+        &copy; 2020 Locqi - 本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+       
+    </span>
+    </br>
+    <span class="footer__copyright">
+             - 基于 <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> 搭建，使用 <a href="https://blog.minhow.com/ " target="_blank" rel="noopener">miho</a> 主题，由<a href="https://gitee.com/locqi " target="_blank" rel="noopener">@Locqi</a> 修改, 原创出自<a href="https://github.com/WongMinHo/hexo-theme-miho" target="_blank">WongMinHo</a>
+         </span>
+       
+    
+   
+      </p>     
+      
+    </div>
+  </div>
+  
+</footer>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  var mihoConfig = {
+      root: "https://locqi.github.io/locqi.com",
+      animate: true,
+      isHome: false,
+      share: true,
+      reward: 1
+  }
+</script>
+<div class="sidebar">
+    <div id="sidebar-search" title="Search">
+        <i class="fa fa-search"></i>
+    </div>
+    <div id="sidebar-category" title="Categories">
+        <i class="fa fa-book"></i>
+    </div>
+    <div id="sidebar-tag" title="Tags">
+        <i class="fa fa-tags"></i>
+    </div>
+    <div id="sidebar-top">
+        <span class="sidebar-top-icon"><i class="fa fa-angle-up"></i></span>
+    </div>
+</div>
+<div class="sidebar-menu-box" id="sidebar-menu-box">
+    <div class="sidebar-menu-box-container">
+        <div id="sidebar-menu-box-categories">
+            <a class="category-link" href="/locqi.com/categories/Java%E6%8A%80%E6%9C%AF/">Java技术</a><a class="category-link" href="/locqi.com/categories/Maven%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/">Maven系列教程</a><a class="category-link" href="/locqi.com/categories/Web%E6%9C%8D%E5%8A%A1/">Web服务</a><a class="category-link" href="/locqi.com/categories/iOS%E6%8A%80%E6%9C%AF/">iOS技术</a><a class="category-link" href="/locqi.com/categories/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">搭建博客</a>
+        </div>
+        <div id="sidebar-menu-box-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+    <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
+</div>
+<div class="mobile-header-menu-nav" id="mobile-header-menu-nav">
+    <div class="mobile-header-menu-container">
+        <span class="title">Menus</span>
+        <ul class="mobile-header-menu-navbar">
+            
+            <li>
+                <a  href="/locqi.com/">
+                    <i class="fa fa-home"></i><span>Home</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/archives">
+                    <i class="fa fa-archive"></i><span>Archives</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/favourite/time.html">
+                    <i class="fa fa-favourite"></i><span>Time Machine</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/aboutme">
+                    <i class="fa fa-user"></i><span>About</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="mobile-header-tag-container">
+        <span class="title">Tags</span>
+        <div id="mobile-header-container-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+</div>
+<div class="search-wrap">
+    <span class="search-close">&times;</span>
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+            <i class="icon icon-lg icon-chevron-left"></i>
+        </a>
+        <input class="search-field" placeholder="Search..." id="keywords">
+        <a id="search-submit" href="javascript:;">
+            <i class="fa fa-search"></i>
+        </a>
+    <div class="search-container" id="search-container">
+        <ul class="search-result" id="search-result">
+        </ul>
+    </div>
+</div>
+
+<div id="search-tpl">
+    <li class="search-result-item">
+        <a href="{url}" class="search-item-li">
+            <span class="search-item-li-title" title="{title}">{title}</span>
+        </a>
+    </li>
+</div>
+
+<script src="/locqi.com/js/search.js"></script>
+
+
+<script src="/locqi.com/js/main.js"></script>
+
+
+
+  <script src="//cdn.bootcss.com/particles.js/2.0.0/particles.min.js"></script>
+  <div id="particles"></div>
+  
+<script src="/locqi.com/js/particles.js"></script>
+
+
+
+
+<script>
+  var disqus_shortname = 'Locqi';
+  
+  var disqus_url = 'https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[7]-Maven-createWebProject-and-plugin-principles/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+
+  <script src="//cdn.bootcss.com/scrollReveal.js/3.0.5/scrollreveal.js"></script>
+  
+<script src="/locqi.com/js/animate.js"></script>
+
+
+
+  
+<script src="/locqi.com/js/pop-img.js"></script>
+
+  <script>
+     $(".article-entry p img").popImg();
+  </script>
+
+  </div>
+</body>
+</html>

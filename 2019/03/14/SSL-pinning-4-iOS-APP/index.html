@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>iOS开发:校验HTTPS网络请求证书(SSL证书和自签名证书) | Locqi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="Locqi,Locqi's Blog" />
+  
+  <meta name="description" content="前言　　SSL pinning在构建一个高度安全的移动APP上扮演了一个十分重要的角色。然而如今好多用户在使用无线移动设备去访问无数不安全的无线网络。 　　这篇文章主要覆盖了SSL pinning 技术，来帮助我们处理最常见的安全攻击–中间人攻击（MITM）。 首先来分析一下什么是HTTPS以及了解HTTPS对于iOS开发者的意义 HTTPS 以及SSL&#x2F;TSL什么是SSL？　　SSL(Secur">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发:校验HTTPS网络请求证书(SSL证书和自签名证书)">
+<meta property="og:url" content="https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/index.html">
+<meta property="og:site_name" content="Locqi">
+<meta property="og:description" content="前言　　SSL pinning在构建一个高度安全的移动APP上扮演了一个十分重要的角色。然而如今好多用户在使用无线移动设备去访问无数不安全的无线网络。 　　这篇文章主要覆盖了SSL pinning 技术，来帮助我们处理最常见的安全攻击–中间人攻击（MITM）。 首先来分析一下什么是HTTPS以及了解HTTPS对于iOS开发者的意义 HTTPS 以及SSL&#x2F;TSL什么是SSL？　　SSL(Secur">
+<meta property="article:published_time" content="2019-03-14T06:50:28.000Z">
+<meta property="article:modified_time" content="2019-03-14T08:10:32.483Z">
+<meta property="article:author" content="Locqi">
+<meta property="article:tag" content="SSL pinning">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/favicon.jpg">
+  
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/locqi.com/css/style.css">
+
+  
+<script src="/locqi.com/js/pace.min.js"></script>
+
+  
+
+  
+  
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+      <header id="header">
+    <div id="banner"></div>
+    <div id="header-outer">
+        <div id="header-menu" class="header-menu-pos animated">
+            <div class="header-menu-container">
+                <a href="/locqi.com/" class="left">
+                    <span class="site-title">Locqi&#39;s Blog</span>
+                </a>
+                <nav id="header-menu-nav" class="right">
+                    
+                    <a  href="/locqi.com/">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/archives">
+                        <i class="fa fa-archive"></i>
+                        <span>Archives</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/favourite/time.html">
+                        <i class="fa fa-favourite"></i>
+                        <span>Time Machine</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/aboutme">
+                        <i class="fa fa-user"></i>
+                        <span>About</span>
+                    </a>
+                    
+                </nav>
+                <a class="mobile-header-menu-button">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        <div id="header-row">
+            <div id="logo">
+                <a href="/locqi.com/">
+                    <img src="/locqi.com/images/logo.jpg" alt="logo">
+                </a>
+            </div>
+            <div class="header-info">
+                <div id="header-title">
+                    
+                    <h2>
+                        Locqi&#39;s Blog
+                    </h2>
+                    
+                </div>
+                <div id="header-description">
+                    
+                    <h3>
+                        世间所有的相遇，都是久别重逢。
+                    </h3>
+                    
+                </div>
+            </div>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a title="Gitee" target="_blank" href="//gitee.com/locqi">
+                            <i class="fa fa-home fa-2x"></i></a>
+                    
+                        <a title="Github" target="_blank" href="//github.com/Locqi">
+                            <i class="fa fa-github fa-2x"></i></a>
+                    
+                        <a title="Weibo" target="_blank" href="//weibo.com/huhu359819176">
+                            <i class="fa fa-weibo fa-2x"></i></a>
+                    
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+      <div class="outer">
+        <section id="main" class="body-wrap"><article id="post-SSL-pinning-4-iOS-APP" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="post-title" itemprop="name">
+      iOS开发:校验HTTPS网络请求证书(SSL证书和自签名证书)
+    </h1>
+    <div class="post-title-bar">
+      <ul>
+          
+              <li>
+                  <i class="fa fa-book"></i>
+                  
+                      <a href="/locqi.com/categories/iOS技术/">iOS技术</a>
+                  
+              </li>
+          
+        <li>
+          <i class="fa fa-calendar"></i>  2019-03-14
+        </li>
+        <li>
+          <i class="fa fa-eye"></i>
+          <span id="busuanzi_value_page_pv"></span>
+        </li>
+      </ul>
+    </div>
+  
+
+          
+      </header>
+    
+    <div class="article-entry post-content" itemprop="articleBody">
+      
+            
+            <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a><em>前言</em></h3><p>　　SSL pinning在构建一个高度安全的移动APP上扮演了一个十分重要的角色。然而如今好多用户在使用无线移动设备去访问无数不安全的无线网络。</p>
+<p>　　这篇文章主要覆盖了SSL pinning 技术，来帮助我们处理最常见的安全攻击–中间人攻击（MITM）。</p>
+<p><code>首先来分析一下什么是HTTPS以及了解HTTPS对于iOS开发者的意义</code></p>
+<h3 id="HTTPS-以及SSL-TSL"><a href="#HTTPS-以及SSL-TSL" class="headerlink" title="HTTPS 以及SSL/TSL"></a><em>HTTPS 以及SSL/TSL</em></h3><h4 id="什么是SSL？"><a href="#什么是SSL？" class="headerlink" title="什么是SSL？"></a>什么是SSL？</h4><p>　　SSL(Secure Sockets Layer, 安全套接字层)，因为原先互联网上使用的 HTTP 协议是明文的，存在很多缺点，比如传输内容会被偷窥（嗅探）和篡改。 SSL 协议的作用就是在传输层对网络连接进行加密。</p>
+<h4 id="何为TLS？"><a href="#何为TLS？" class="headerlink" title="何为TLS？"></a>何为TLS？</h4><p>　　到了1999年，SSL 因为应用广泛，已经成为互联网上的事实标准。IETF 就在那年把 SSL 标准化。标准化之后的名称改为 TLS（Transport Layer Security，传输层安全协议）。SSL与TLS可以视作同一个东西的不同阶段
+　　</p>
+<h4 id="什么又是HTTPS"><a href="#什么又是HTTPS" class="headerlink" title="什么又是HTTPS"></a>什么又是HTTPS</h4><p>　　简单来说，HTTPS = HTTP + SSL/TLS, 也就是 HTTP over SSL 或 HTTP over TLS，这是后面加 S 的由来 。<br>　　<br><strong>HTTPS和HTTP异同：<br>　　HTTP和HTTPS使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。HTTP的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比HTTP协议安全。</strong></p>
+<p>　　在WWDC 2016开发者大会上，苹果宣布了一个最后期限：到2017年1月1日 App Store中的所有应用都必须启用 App Transport Security安全功能。App Transport Security（ATS）是苹果在iOS 9中引入的一项隐私保护功能，屏蔽明文HTTP资源加载，连接必须经过更安全的HTTPS。苹果目前允许开发者暂时可以继续使用HTTP连接，但到年底所有官方商店的应用都必须强制性使用ATS。</p>
+<h4 id="苹果ATS对HTTPS证书的要求"><a href="#苹果ATS对HTTPS证书的要求" class="headerlink" title="苹果ATS对HTTPS证书的要求"></a>苹果ATS对HTTPS证书的要求</h4><p><code>启用ATS必须符合以下标准，不满足条件的HTTPS证书，ATS都会拒绝连接：</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">服务器所有的连接使用TLS1.2以上版本</span><br><span class="line">HTTPS证书必须使用SHA256以上哈希算法签名</span><br><span class="line">HTTPS证书必须使用RSA 2048位或ECC 256位以上公钥算法</span><br><span class="line">使用前向加密技术</span><br></pre></td></tr></table></figure>
+<p>　　此外，苹果ATS支持CT证书透明，要求开发者使用支持CT证书透明度的SSL证书，确保SSL证书合法透明，防止中间人攻击。</p>
+<h3 id="发送HTTPS请求信任SSL证书和自签名证书，分为三种情况"><a href="#发送HTTPS请求信任SSL证书和自签名证书，分为三种情况" class="headerlink" title="发送HTTPS请求信任SSL证书和自签名证书，分为三种情况"></a><em>发送HTTPS请求信任SSL证书和自签名证书，分为三种情况</em></h3><h4 id="1、系统方法"><a href="#1、系统方法" class="headerlink" title="1、系统方法"></a>1、系统方法</h4><p>　　如果你的app服务端安装的是SSL颁发的CA，可以使用系统方法直接实现信任SSL证书，关于Apple对SSL证书的要求请参考：苹果官方文档<a href="https://developer.apple.com/documentation/security/certificate_key_and_trust_services" target="_blank" rel="noopener">CertKeyTrustProgGuide</a></p>
+<p>　　这种方式不需要在Bundle中引入CA文件，可以交给系统去判断服务器端的证书是不是SSL证书，验证过程也不需要我们去具体实现。</p>
+<p>示例代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NSURL *URL &#x3D; [NSURL URLWithString:URLString];</span><br><span class="line">NSURLRequest *request &#x3D; [[NSURLRequest alloc] initWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];</span><br><span class="line">&#x2F;&#x2F;创建同步连接</span><br><span class="line">NSError *error &#x3D; nil;</span><br><span class="line">NSData *receivedData &#x3D; [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&amp;error];</span><br><span class="line">NSString *receivedInfo &#x3D; [[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding];</span><br></pre></td></tr></table></figure>
+<p><code>当然，如果你需要同时信任SSL证书和自签名证书的话还是需要在代码中实现CA的验证，这种情况在后面会提到。</code></p>
+<h4 id="2、AFNetWorking"><a href="#2、AFNetWorking" class="headerlink" title="2、AFNetWorking"></a>2、AFNetWorking</h4><p>　　基于AFNetWorking的SSL特定服务器证书信任处理，重写AFNetWorking的customSecurityPolicy方法,这里我创建了一个HttpRequest类，分别对GET和POST方法进行了封装，以GET方法为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">+ (void)get:(NSString *)url params:(NSDictionary *)params success:(void (^)(id))success failure:(void (^)(NSError *))failure &#123;</span><br><span class="line">    &#x2F;&#x2F; 1.获得请求管理者</span><br><span class="line">    AFHTTPRequestOperationManager *mgr &#x3D; [AFHTTPRequestOperationManager manager];</span><br><span class="line">    &#x2F;&#x2F; 2.申明返回的结果是text&#x2F;html类型</span><br><span class="line">    mgr.responseSerializer &#x3D; [AFHTTPResponseSerializer serializer];</span><br><span class="line">    &#x2F;&#x2F; 3.设置超时时间为10s</span><br><span class="line">    mgr.requestSerializer.timeoutInterval &#x3D; 10;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 加上这行代码，https ssl 验证。</span><br><span class="line">    if(openHttpsSSL) &#123;</span><br><span class="line">        [mgr setSecurityPolicy:[self customSecurityPolicy]];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; 4.发送GET请求</span><br><span class="line">    [mgr GET:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObj)&#123;</span><br><span class="line">        if (success) &#123;</span><br><span class="line">            success(responseObj);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; failure:^(AFHTTPRequestOperation *operation, NSError *error) &#123;</span><br><span class="line">        if (error) &#123;</span><br><span class="line">            failure(error);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">+ (AFSecurityPolicy*)customSecurityPolicy &#123;</span><br><span class="line">    &#x2F;&#x2F; &#x2F;先导入证书</span><br><span class="line">    NSString *cerPath &#x3D; [[NSBundle mainBundle] pathForResource:certificate ofType:@&quot;cer&quot;];&#x2F;&#x2F;证书的路径</span><br><span class="line">    NSData *certData &#x3D; [NSData dataWithContentsOfFile:cerPath];</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; AFSSLPinningModeCertificate 使用证书验证模式</span><br><span class="line">    AFSecurityPolicy *securityPolicy &#x3D; [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F; allowInvalidCertificates 是否允许无效证书（也就是自建的证书），默认为NO</span><br><span class="line">    &#x2F;&#x2F; 如果是需要验证自建证书，需要设置为YES</span><br><span class="line">    securityPolicy.allowInvalidCertificates &#x3D; YES;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F;validatesDomainName 是否需要验证域名，默认为YES；</span><br><span class="line">    &#x2F;&#x2F;假如证书的域名与你请求的域名不一致，需把该项设置为NO；如设成NO的话，即服务器使用其他可信任机构颁发的证书，也可以建立连接，这个非常危险，建议打开。</span><br><span class="line">    &#x2F;&#x2F;置为NO，主要用于这种情况：客户端请求的是子域名，而证书上的是另外一个域名。因为SSL证书上的域名是独立的，假如证书上注册的域名是www.google.com，那么mail.google.com是无法验证通过的；当然，有钱可以注册通配符的域名*.google.com，但这个还是比较贵的。</span><br><span class="line">    &#x2F;&#x2F;如置为NO，建议自己添加对应域名的校验逻辑。</span><br><span class="line">    securityPolicy.validatesDomainName &#x3D; NO;</span><br><span class="line">    </span><br><span class="line">    securityPolicy.pinnedCertificates &#x3D; @[certData];</span><br><span class="line">    </span><br><span class="line">    return securityPolicy;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>　　<strong>其中的cerPath就是app bundle中证书路径，certificate为证书名称的宏，仅支持cer格式，securityPolicy的相关配置尤为重要，请仔细阅读customSecurityPolicy方法并根据实际情况设置其属性。</strong><br>　　这样，就能够在AFNetWorking的基础上使用HTTPS协议访问特定服务器，但是不能信任根证书的CA文件，因此这种方式存在风险，读取pinnedCertificates中的证书数组的时候有可能失败，如果证书不符合，certData就会为nil。</p>
+<h4 id="3、NSURLConnection（NSURLSession原理相同）"><a href="#3、NSURLConnection（NSURLSession原理相同）" class="headerlink" title="3、NSURLConnection（NSURLSession原理相同）　"></a>3、NSURLConnection（NSURLSession原理相同）　</h4><p>　　更改系统方法，发送异步NSURLConnection请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (void)getDataWithURLRequest &#123;</span><br><span class="line">    &#x2F;&#x2F;connection</span><br><span class="line">    NSString *urlStr &#x3D; @&quot;https:&#x2F;&#x2F;developer.apple.com&#x2F;cn&#x2F;&quot;;</span><br><span class="line">    NSURL *url &#x3D; [NSURL URLWithString:urlStr];</span><br><span class="line">    NSMutableURLRequest *request &#x3D; [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10];</span><br><span class="line">    NSURLConnection *connection &#x3D; [[NSURLConnection alloc]initWithRequest:request delegate:self];</span><br><span class="line">    [connection start];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>　　重点在于处理NSURLConnection的didReceiveAuthenticationChallenge代理方法，对CA文件进行验证，并建立信任连接。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">#pragma mark --NSURLConnectionDelegate--</span><br><span class="line"></span><br><span class="line">- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)prote &#123;</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F;NO:系統進行管理、YES:調用connection: didReceiveAuthenticationChallenge進行驗證</span><br><span class="line">    return [prote.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge &#123;</span><br><span class="line">    </span><br><span class="line">    if ([[[challenge protectionSpace] authenticationMethod] isEqualToString: NSURLAuthenticationMethodServerTrust]) &#123;</span><br><span class="line">        do&#123;</span><br><span class="line">            </span><br><span class="line">            SecTrustRef serverTrust &#x3D; [[challenge protectionSpace] serverTrust];</span><br><span class="line">            </span><br><span class="line">            if(nil &#x3D;&#x3D; serverTrust)</span><br><span class="line">                break; &#x2F;* failed *&#x2F;</span><br><span class="line">            </span><br><span class="line">            &#x2F;&#x2F;自定義域名驗證</span><br><span class="line">            NSString *serverHostname &#x3D; challenge.protectionSpace.host;</span><br><span class="line">            CFRetain(serverTrust);</span><br><span class="line">            </span><br><span class="line">            SecPolicyRef SslPolicy &#x3D; SecPolicyCreateSSL(YES, (__bridge CFStringRef)(serverHostname));</span><br><span class="line">            SecTrustSetPolicies(serverTrust, SslPolicy);</span><br><span class="line">            CFRelease(SslPolicy);</span><br><span class="line">            </span><br><span class="line">            &#x2F;&#x2F;導入多張CA證書（Certification Authority，支持SSL證書以及自簽名的CA），請替換掉你的證書名稱</span><br><span class="line">            NSString *cerPath &#x3D; [[NSBundle mainBundle] pathForResource:@&quot;baidu&quot; ofType:@&quot;cer&quot;];&#x2F;&#x2F;自簽名證書</span><br><span class="line">            NSData* caCert &#x3D; [NSData dataWithContentsOfFile:cerPath];</span><br><span class="line">            </span><br><span class="line">            NSString *cerPath2 &#x3D; [[NSBundle mainBundle] pathForResource:@&quot;apple&quot; ofType:@&quot;cer&quot;];&#x2F;&#x2F;SSL證書</span><br><span class="line">            NSData * caCert2 &#x3D; [NSData dataWithContentsOfFile:cerPath2];</span><br><span class="line">            </span><br><span class="line">            if(nil &#x3D;&#x3D; caCert)</span><br><span class="line">                break; &#x2F;* failed *&#x2F;</span><br><span class="line">            </span><br><span class="line">            if (nil &#x3D;&#x3D; caCert2) &#123;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            SecCertificateRef caRef &#x3D; SecCertificateCreateWithData(NULL, (__bridge CFDataRef)caCert);</span><br><span class="line">            </span><br><span class="line">            if(nil &#x3D;&#x3D; caRef)</span><br><span class="line">                break; &#x2F;* failed *&#x2F;</span><br><span class="line">            </span><br><span class="line">            SecCertificateRef caRef2 &#x3D; SecCertificateCreateWithData(NULL, (__bridge CFDataRef)caCert2);</span><br><span class="line">            </span><br><span class="line">            if(nil &#x3D;&#x3D; caRef2)</span><br><span class="line">                break; &#x2F;* failed *&#x2F;</span><br><span class="line">            </span><br><span class="line">            NSArray *caArray &#x3D; @[(__bridge id)(caRef),(__bridge id)(caRef2)];</span><br><span class="line">            </span><br><span class="line">            if(nil &#x3D;&#x3D; caArray)</span><br><span class="line">                break; &#x2F;* failed *&#x2F;</span><br><span class="line">            </span><br><span class="line">            OSStatus status &#x3D; SecTrustSetAnchorCertificates(serverTrust, (__bridge CFArrayRef)caArray);</span><br><span class="line">            </span><br><span class="line">            if(!(errSecSuccess &#x3D;&#x3D; status))</span><br><span class="line">                break; &#x2F;* failed *&#x2F;</span><br><span class="line">            </span><br><span class="line">            SecTrustResultType result &#x3D; -1;</span><br><span class="line">            status &#x3D; SecTrustEvaluate(serverTrust, &amp;result);</span><br><span class="line">            </span><br><span class="line">            if(!(errSecSuccess &#x3D;&#x3D; status))</span><br><span class="line">                break; &#x2F;* failed *&#x2F;</span><br><span class="line"></span><br><span class="line">            NSLog(@&quot;stutas:%d&quot;,(int)status);</span><br><span class="line">            NSLog(@&quot;Result: %d&quot;, result);</span><br><span class="line">            </span><br><span class="line">            BOOL allowConnect &#x3D; (result &#x3D;&#x3D; kSecTrustResultUnspecified) || (result &#x3D;&#x3D; kSecTrustResultProceed);</span><br><span class="line"></span><br><span class="line">            &#x2F;* https:&#x2F;&#x2F;developer.apple.com&#x2F;library&#x2F;ios&#x2F;technotes&#x2F;tn2232&#x2F;_index.html *&#x2F;</span><br><span class="line">            &#x2F;* https:&#x2F;&#x2F;developer.apple.com&#x2F;library&#x2F;mac&#x2F;qa&#x2F;qa1360&#x2F;_index.html *&#x2F;</span><br><span class="line">            &#x2F;* kSecTrustResultUnspecified and kSecTrustResultProceed are success *&#x2F;</span><br><span class="line">            if(!allowConnect)&#123;</span><br><span class="line">                break; &#x2F;* failed *&#x2F;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">#if 0</span><br><span class="line">            &#x2F;* Treat kSecTrustResultConfirm and kSecTrustResultRecoverableTrustFailure as success *&#x2F;</span><br><span class="line">            &#x2F;*   since the user will likely tap-through to see the dancing bunnies *&#x2F;</span><br><span class="line">            if(result &#x3D;&#x3D; kSecTrustResultDeny || result &#x3D;&#x3D; kSecTrustResultFatalTrustFailure || result &#x3D;&#x3D; kSecTrustResultOtherError)</span><br><span class="line">                break; &#x2F;* failed to trust cert (good in this case) *&#x2F;</span><br><span class="line">#endif</span><br><span class="line">            </span><br><span class="line">            &#x2F;&#x2F; The only good exit point</span><br><span class="line">            NSLog(@&quot;信任該證書&quot;);</span><br><span class="line">            return [[challenge sender] useCredential: [NSURLCredential credentialForTrust: serverTrust]</span><br><span class="line">                          forAuthenticationChallenge: challenge];</span><br><span class="line">            </span><br><span class="line">        &#125;while(0);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    UIAlertView *alertCer &#x3D; [[UIAlertView alloc] initWithTitle:@&quot;服務器端證書不被信任，請聯繫系統管理員。&quot; message:nil delegate:self cancelButtonTitle:@&quot;確定&quot; otherButtonTitles:nil, nil];</span><br><span class="line"></span><br><span class="line">    alertCer.alertViewStyle &#x3D; UIAlertViewStyleDefault;</span><br><span class="line">    [alertCer show];</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; Bad log</span><br><span class="line">    NSLog(@&quot;該證書不被信任&quot;);</span><br><span class="line">    return [[challenge sender] cancelAuthenticationChallenge: challenge];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>　　这里的关键在于result参数的值，根据官方文档的说明，判断(result == kSecTrustResultUnspecified) || (result == kSecTrustResultProceed)的值，若为1，则该网站的CA被app信任成功，可以建立数据连接，这意味着所有由该CA签发的各个服务器证书都被信任，而访问其它没有被信任的任何网站都会连接失败。该CA文件既可以是SLL也可以是自签名。</p>
+<p>　　至此，HTTPS信任证书的问题得以解决，这不仅是为了响应Apple强制性使用ATS的要求，也是为了实际生产环境安全性的考虑，HTTPS是未来的趋势，建议尽早支持。</p>
+<h3 id="便宜SSL"><a href="#便宜SSL" class="headerlink" title="便宜SSL"></a><em>便宜SSL</em></h3><p>如果要启用HTTPS，我们就需要从证书授权机构处获取一个证书，我们可以从这获得网站域名的免费的证书：<a href="https://www.pianyissl.com/?i121889" target="_blank" rel="noopener">https://www.pianyissl.com/?i121889</a><br>具体操作十分简单，申请可免费试用1个月。</p>
+
+            <div class="post-copyright">
+    <div class="content">
+        <p>最后更新： 2019年03月14日 16:10</p>
+        <!--<p>原始链接： <a class="post-url" href="/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/" title="iOS开发:校验HTTPS网络请求证书(SSL证书和自签名证书)">https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/</a></p>-->
+        <footer>
+            <a href="https://locqi.github.io/locqi.com">
+                <img src="/locqi.com/images/logo.jpg" alt="Locqi">
+                Locqi
+            </a>
+        </footer>
+    </div>
+</div>
+
+      
+        
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;">赏</a>
+</div>
+
+<div id="reward" class="post-modal reward-lay">
+    <a class="close" href="javascript:;" id="reward-close">×</a>
+    <span class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        请我吃糖~
+        <i class="icon icon-quote-right"></i>
+    </span>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/locqi.com/images/wechat_code.jpg" alt="打赏二维码">
+        </div>
+        <div class="reward-select">
+            
+            <label class="reward-select-item checked" data-id="wechat" data-wechat="/locqi.com/images/wechat_code.jpg">
+                <img class="reward-select-item-wechat" src="/locqi.com/images/wechat.png" alt="微信">
+            </label>
+            
+            
+            <label class="reward-select-item" data-id="alipay" data-alipay="/locqi.com/images/alipay_code.jpg">
+                <img class="reward-select-item-alipay" src="/locqi.com/images/alipay.png" alt="支付宝">
+            </label>
+            
+        </div>
+    </div>
+</div>
+
+
+        
+    </div>
+    <footer class="article-footer">
+        
+        
+<div class="post-share">
+    <a href="javascript:;" id="share-sub" class="post-share-fab">
+        <i class="fa fa-share-alt"></i>
+    </a>
+    <div class="post-share-list" id="share-list">
+        <ul class="share-icons">
+          <li>
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/&title=《iOS开发:校验HTTPS网络请求证书(SSL证书和自签名证书)》 — Locqi&pic=https://locqi.github.io/locqi.comimages/logo.jpg" data-title="微博">
+              <i class="fa fa-weibo"></i>
+            </a>
+          </li>
+          <li>
+            <a class="weixin share-sns" id="wxFab" href="javascript:;" data-title="微信">
+              <i class="fa fa-weixin"></i>
+            </a>
+          </li>
+          <li>
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/&title=《iOS开发:校验HTTPS网络请求证书(SSL证书和自签名证书)》 — Locqi&source=没有最好只有更好" data-title="QQ">
+              <i class="fa fa-qq"></i>
+            </a>
+          </li>
+          <li>
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/" data-title="Facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+          </li>
+          <li>
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《iOS开发:校验HTTPS网络请求证书(SSL证书和自签名证书)》 — Locqi&url=https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/&via=https://locqi.github.io/locqi.com" data-title="Twitter">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/" data-title="Google+">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        </ul>
+     </div>
+</div>
+<div class="post-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;" id="wxShare-close">×</a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/" alt="微信分享二维码">
+</div>
+
+<div class="mask"></div>
+
+        
+        <ul class="article-footer-menu">
+            
+            
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/locqi.com/tags/SSLpinning/" class="color2">SSL pinning</a>
+      
+  </li>
+
+        </ul>
+        
+    </footer>
+  </div>
+</article>
+
+
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#前言"><span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#HTTPS-以及SSL-TSL"><span class="post-toc-text">HTTPS 以及SSL&#x2F;TSL</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#什么是SSL？"><span class="post-toc-text">什么是SSL？</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#何为TLS？"><span class="post-toc-text">何为TLS？</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#什么又是HTTPS"><span class="post-toc-text">什么又是HTTPS</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#苹果ATS对HTTPS证书的要求"><span class="post-toc-text">苹果ATS对HTTPS证书的要求</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#发送HTTPS请求信任SSL证书和自签名证书，分为三种情况"><span class="post-toc-text">发送HTTPS请求信任SSL证书和自签名证书，分为三种情况</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1、系统方法"><span class="post-toc-text">1、系统方法</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2、AFNetWorking"><span class="post-toc-text">2、AFNetWorking</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3、NSURLConnection（NSURLSession原理相同）"><span class="post-toc-text">3、NSURLConnection（NSURLSession原理相同）　</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#便宜SSL"><span class="post-toc-text">便宜SSL</span></a></li></ol>
+        </nav>
+    </aside>
+    
+
+<nav id="article-nav">
+  
+    <a href="/locqi.com/2019/03/26/cocoapods-use/" id="article-nav-newer" class="article-nav-link-wrap">
+
+      <span class="article-nav-title">
+        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
+        
+          使用CocoaPods管理第三方开源库
+        
+      </span>
+    </a>
+  
+  
+    <a href="/locqi.com/2019/03/13/JavaList-DeepAndShallowCopy/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">java List复制：浅拷贝与深拷贝</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
+  
+</nav>
+
+
+
+    
+        <section id="comments">
+            <div id="disqus_thread">
+                <script type="text/javascript">
+                    var disqus_shortname = 'Locqi';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+            </div>
+        </section>
+    
+</section>
+        
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+      <p>
+      <span class="footer__copyright">
+        &copy; 2020 Locqi - 本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+       
+    </span>
+    </br>
+    <span class="footer__copyright">
+             - 基于 <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> 搭建，使用 <a href="https://blog.minhow.com/ " target="_blank" rel="noopener">miho</a> 主题，由<a href="https://gitee.com/locqi " target="_blank" rel="noopener">@Locqi</a> 修改, 原创出自<a href="https://github.com/WongMinHo/hexo-theme-miho" target="_blank">WongMinHo</a>
+         </span>
+       
+    
+   
+      </p>     
+      
+    </div>
+  </div>
+  
+</footer>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  var mihoConfig = {
+      root: "https://locqi.github.io/locqi.com",
+      animate: true,
+      isHome: false,
+      share: true,
+      reward: 1
+  }
+</script>
+<div class="sidebar">
+    <div id="sidebar-search" title="Search">
+        <i class="fa fa-search"></i>
+    </div>
+    <div id="sidebar-category" title="Categories">
+        <i class="fa fa-book"></i>
+    </div>
+    <div id="sidebar-tag" title="Tags">
+        <i class="fa fa-tags"></i>
+    </div>
+    <div id="sidebar-top">
+        <span class="sidebar-top-icon"><i class="fa fa-angle-up"></i></span>
+    </div>
+</div>
+<div class="sidebar-menu-box" id="sidebar-menu-box">
+    <div class="sidebar-menu-box-container">
+        <div id="sidebar-menu-box-categories">
+            <a class="category-link" href="/locqi.com/categories/Java%E6%8A%80%E6%9C%AF/">Java技术</a><a class="category-link" href="/locqi.com/categories/Maven%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/">Maven系列教程</a><a class="category-link" href="/locqi.com/categories/Web%E6%9C%8D%E5%8A%A1/">Web服务</a><a class="category-link" href="/locqi.com/categories/iOS%E6%8A%80%E6%9C%AF/">iOS技术</a><a class="category-link" href="/locqi.com/categories/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">搭建博客</a>
+        </div>
+        <div id="sidebar-menu-box-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+    <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
+</div>
+<div class="mobile-header-menu-nav" id="mobile-header-menu-nav">
+    <div class="mobile-header-menu-container">
+        <span class="title">Menus</span>
+        <ul class="mobile-header-menu-navbar">
+            
+            <li>
+                <a  href="/locqi.com/">
+                    <i class="fa fa-home"></i><span>Home</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/archives">
+                    <i class="fa fa-archive"></i><span>Archives</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/favourite/time.html">
+                    <i class="fa fa-favourite"></i><span>Time Machine</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/aboutme">
+                    <i class="fa fa-user"></i><span>About</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="mobile-header-tag-container">
+        <span class="title">Tags</span>
+        <div id="mobile-header-container-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+</div>
+<div class="search-wrap">
+    <span class="search-close">&times;</span>
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+            <i class="icon icon-lg icon-chevron-left"></i>
+        </a>
+        <input class="search-field" placeholder="Search..." id="keywords">
+        <a id="search-submit" href="javascript:;">
+            <i class="fa fa-search"></i>
+        </a>
+    <div class="search-container" id="search-container">
+        <ul class="search-result" id="search-result">
+        </ul>
+    </div>
+</div>
+
+<div id="search-tpl">
+    <li class="search-result-item">
+        <a href="{url}" class="search-item-li">
+            <span class="search-item-li-title" title="{title}">{title}</span>
+        </a>
+    </li>
+</div>
+
+<script src="/locqi.com/js/search.js"></script>
+
+
+<script src="/locqi.com/js/main.js"></script>
+
+
+
+  <script src="//cdn.bootcss.com/particles.js/2.0.0/particles.min.js"></script>
+  <div id="particles"></div>
+  
+<script src="/locqi.com/js/particles.js"></script>
+
+
+
+
+<script>
+  var disqus_shortname = 'Locqi';
+  
+  var disqus_url = 'https://locqi.github.io/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+
+  <script src="//cdn.bootcss.com/scrollReveal.js/3.0.5/scrollreveal.js"></script>
+  
+<script src="/locqi.com/js/animate.js"></script>
+
+
+
+  
+<script src="/locqi.com/js/pop-img.js"></script>
+
+  <script>
+     $(".article-entry p img").popImg();
+  </script>
+
+  </div>
+</body>
+</html>

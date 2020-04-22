@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Maven详解（八）------ 继承和聚合 | Locqi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="Locqi,Locqi's Blog" />
+  
+  <meta name="description" content="目录 1、继承　 2、聚合  正文[回到顶部](#jumpDirectory)   1、继承  　　需求场景： 　　有三个 Maven 工程，每个工程都依赖某个 jar 包，比如 Junit，由于 test 范围的依赖不能传递，它必然会分散在每个工程中，而且每个工程的jar 包版本可能不一致。那么如何管理各个工程中对于某个 jar 包的版本呢？ 　　解决办法： 　　将那个 jar 包版本统一提取到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Maven详解（八）------ 继承和聚合">
+<meta property="og:url" content="https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/index.html">
+<meta property="og:site_name" content="Locqi">
+<meta property="og:description" content="目录 1、继承　 2、聚合  正文[回到顶部](#jumpDirectory)   1、继承  　　需求场景： 　　有三个 Maven 工程，每个工程都依赖某个 jar 包，比如 Junit，由于 test 范围的依赖不能传递，它必然会分散在每个工程中，而且每个工程的jar 包版本可能不一致。那么如何管理各个工程中对于某个 jar 包的版本呢？ 　　解决办法： 　　将那个 jar 包版本统一提取到">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/create-Parent-Project.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/parent-project-groupId-repeat.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/delete-version-4-sonProject.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/junit-version-properties.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/Parent-Project-Manage-son-Module.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/create-maven-module.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/input-module-Name.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/parent-project.png?raw=true">
+<meta property="article:published_time" content="2018-09-19T07:52:50.000Z">
+<meta property="article:modified_time" content="2018-09-19T07:41:58.000Z">
+<meta property="article:author" content="Locqi">
+<meta property="article:tag" content="Maven技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/create-Parent-Project.png?raw=true">
+  
+  
+    <link rel="icon" href="/favicon.jpg">
+  
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/locqi.com/css/style.css">
+
+  
+<script src="/locqi.com/js/pace.min.js"></script>
+
+  
+
+  
+  
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+      <header id="header">
+    <div id="banner"></div>
+    <div id="header-outer">
+        <div id="header-menu" class="header-menu-pos animated">
+            <div class="header-menu-container">
+                <a href="/locqi.com/" class="left">
+                    <span class="site-title">Locqi&#39;s Blog</span>
+                </a>
+                <nav id="header-menu-nav" class="right">
+                    
+                    <a  href="/locqi.com/">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/archives">
+                        <i class="fa fa-archive"></i>
+                        <span>Archives</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/favourite/time.html">
+                        <i class="fa fa-favourite"></i>
+                        <span>Time Machine</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/aboutme">
+                        <i class="fa fa-user"></i>
+                        <span>About</span>
+                    </a>
+                    
+                </nav>
+                <a class="mobile-header-menu-button">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        <div id="header-row">
+            <div id="logo">
+                <a href="/locqi.com/">
+                    <img src="/locqi.com/images/logo.jpg" alt="logo">
+                </a>
+            </div>
+            <div class="header-info">
+                <div id="header-title">
+                    
+                    <h2>
+                        Locqi&#39;s Blog
+                    </h2>
+                    
+                </div>
+                <div id="header-description">
+                    
+                    <h3>
+                        世间所有的相遇，都是久别重逢。
+                    </h3>
+                    
+                </div>
+            </div>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a title="Gitee" target="_blank" href="//gitee.com/locqi">
+                            <i class="fa fa-home fa-2x"></i></a>
+                    
+                        <a title="Github" target="_blank" href="//github.com/Locqi">
+                            <i class="fa fa-github fa-2x"></i></a>
+                    
+                        <a title="Weibo" target="_blank" href="//weibo.com/huhu359819176">
+                            <i class="fa fa-weibo fa-2x"></i></a>
+                    
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+      <div class="outer">
+        <section id="main" class="body-wrap"><article id="post-Maven-Detailed-[8]-Maven-Inheritance-and-aggregation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="post-title" itemprop="name">
+      Maven详解（八）------ 继承和聚合
+    </h1>
+    <div class="post-title-bar">
+      <ul>
+          
+              <li>
+                  <i class="fa fa-book"></i>
+                  
+                      <a href="/locqi.com/categories/Maven系列教程/">Maven系列教程</a>
+                  
+              </li>
+          
+        <li>
+          <i class="fa fa-calendar"></i>  2018-09-19
+        </li>
+        <li>
+          <i class="fa fa-eye"></i>
+          <span id="busuanzi_value_page_pv"></span>
+        </li>
+      </ul>
+    </div>
+  
+
+          
+      </header>
+    
+    <div class="article-entry post-content" itemprop="articleBody">
+      
+            
+            <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a><span id="jumpDirectory">目录</span></h2><ul>
+<li><a href="#1">1、继承</a>　</li>
+<li><a href="#2">2、聚合</a></li>
+</ul>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="1">1、继承</h3>
+</blockquote>
+<p>　　<strong>需求场景：</strong></p>
+<p>　　有三个 Maven 工程，每个工程都依赖某个 jar 包，比如 Junit，由于 test 范围的依赖不能传递，它必然会分散在每个工程中，而且每个工程的jar 包版本可能不一致。那么如何管理各个工程中对于某个 jar 包的版本呢？</p>
+<p>　　<strong>解决办法：</strong></p>
+<p>　　将那个 jar 包版本统一提取到 “父” 工程中，在子工程中声明依赖时不指定版本，以父工程中统一设定的为准，同时也便于修改。</p>
+<p>　　<strong>操作步骤：</strong></p>
+<p>　　①、创建父工程<br>　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/create-Parent-Project.png?raw=true" alt="create-Parent-Project.png"></p>
+<p>　　②、在子工程中声明对父工程的引用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--子工程中声明对父工程的引用  --&gt;</span><br><span class="line">&lt;parent&gt;</span><br><span class="line">    &lt;groupId&gt;com.ys.maven&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;Parent&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</span><br><span class="line">    &lt;!-- 以当前工程文件为基准的父工程 pom.xml文件的相对路径（可以不配置） --&gt;</span><br><span class="line">    &lt;relativePath&gt;../Parent/pom.xml&lt;/relativePath&gt;</span><br><span class="line">&lt;/parent&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　③、将子工程的坐标中与父工程坐标重复的内容删除（不删除也可以，为了简洁）</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/parent-project-groupId-repeat.png?raw=true" alt="parent-project-groupId-repeat.png"><br>　　<br>　　④、在父工程中统一那个 jar 的版本依赖<br>　<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">　&lt;dependencyManagement&gt;</span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">      &lt;dependency&gt;</span><br><span class="line">          &lt;groupId&gt;junit&lt;&#x2F;groupId&gt;</span><br><span class="line">          &lt;artifactId&gt;junit&lt;&#x2F;artifactId&gt;</span><br><span class="line">          &lt;version&gt;4.8&lt;&#x2F;version&gt;</span><br><span class="line">          &lt;scope&gt;test&lt;&#x2F;scope&gt;</span><br><span class="line">      &lt;&#x2F;dependency&gt;</span><br><span class="line">    &lt;&#x2F;dependencies&gt;</span><br><span class="line"> </span><br><span class="line">&lt;&#x2F;dependencyManagement&gt;</span><br></pre></td></tr></table></figure><br>　<br>　　<strong>dependencyManagement标签管理的依赖，其实没有真正依赖，它只是管理依赖的版本。</strong><br>　　<br>　　⑤、在子工程中删除 Junit 的版本号<br>　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/delete-version-4-sonProject.png?raw=true" alt="delete-version-4-sonProject.png"></p>
+<p>　　<strong>以后要更改版本号，我们只需要更改父工程中的版本号即可！！！</strong></p>
+<p>　　⑥、父工程通过 properties 统一管理版本号<br>　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/junit-version-properties.png?raw=true" alt="junit-version-properties.png"></p>
+<p>　　我们可以通过<properties></properties>自定义标签，然后在标签里面填写常量，这种方法不仅可以用来管理版本号，还可以用来管理比如设置某种编码等等。</p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="2、聚合"><a href="#2、聚合" class="headerlink" title="2、聚合"></a><span id="2">2、聚合</span></h3></blockquote>
+<p>　　<strong>需求场景：</strong></p>
+<p>　　在真实项目中，一个项目有表现层、业务层、持久层等。我们在用Maven 管理项目的时候，通常会创建多个 Maven 工程，也就是一个项目的多个模块。但是这样分成多个模块了，当我们进行项目打包发布的时候，那么要每一个模块都执行打包操作吗？这种重复的操作我们怎么才能避免呢？</p>
+<p>　　<strong>解决办法：</strong></p>
+<p>　　创建一个聚合工程，将其他的各个模块都由这个聚合工程来管理，那么我们在进行项目发布的时候，只需要打包这个聚合工程就可以了。</p>
+<p>　　<strong>第一步：创建聚合工程（注意聚合工程的打包方式也必须为 pom，通常由 上面所讲的父工程来充当聚合工程）</strong></p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/Parent-Project-Manage-son-Module.png?raw=true" alt="Parent-Project-Manage-son-Module.png"><br>　　<br>　　<strong>第二步：创建子工程：业务层</strong></p>
+<p>　　　　①、选择 Maven Module<br>　　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/create-maven-module.png?raw=true" alt="create-maven-module.png"></p>
+<p>　　　　②、填写子工程模块名，打包方式选择 jar（子工程除了 web 层我们打包方式选择 war ，其余的都选择 jar）</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/input-module-Name.png?raw=true" alt="input-module-Name.png"></p>
+<p>　　<strong>第三步：创建子工程：表现层和持久层</strong></p>
+<p>　　　　创建步骤和前面一样，注意表现层打包方式我们要选择 war，因为要发布到 tomcat 容器运行。</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/parent-project.png?raw=true" alt="parent-project.png"></p>
+<p>　　<strong>第四步：在聚合工程中添加子工程的引用</strong>　　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">  &lt;module&gt;Service&lt;&#x2F;module&gt;</span><br><span class="line">  &lt;module&gt;Controller&lt;&#x2F;module&gt;</span><br><span class="line">  &lt;module&gt;Mapper&lt;&#x2F;module&gt;</span><br><span class="line">&lt;&#x2F;modules&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>注意：</code></strong></p>
+<p>　　1、这里虽然各个模块有依赖关系，但是 <module></modelu>可以不依赖顺序添加，maven会自动识别依赖关系进行编译打包。</p>
+<p>　　2、这里总的聚合工程随便哪个工程都可以，但是通常用 Parent 工程来完成。<br>　　<br>　　至此，<a href="https://locqi.gitee.io/locqi.com/categories/Maven系列教程/" target="_blank" rel="noopener"><strong><code>Maven系列教程</code></strong></a> 就全部更新完成了！Thanks～</p>
+
+            <div class="post-copyright">
+    <div class="content">
+        <p>最后更新： 2018年09月19日 15:41</p>
+        <!--<p>原始链接： <a class="post-url" href="/locqi.com/2018/09/19/Maven-Detailed-%5B8%5D-Maven-Inheritance-and-aggregation/" title="Maven详解（八）------ 继承和聚合">https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/</a></p>-->
+        <footer>
+            <a href="https://locqi.github.io/locqi.com">
+                <img src="/locqi.com/images/logo.jpg" alt="Locqi">
+                Locqi
+            </a>
+        </footer>
+    </div>
+</div>
+
+      
+        
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;">赏</a>
+</div>
+
+<div id="reward" class="post-modal reward-lay">
+    <a class="close" href="javascript:;" id="reward-close">×</a>
+    <span class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        请我吃糖~
+        <i class="icon icon-quote-right"></i>
+    </span>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/locqi.com/images/wechat_code.jpg" alt="打赏二维码">
+        </div>
+        <div class="reward-select">
+            
+            <label class="reward-select-item checked" data-id="wechat" data-wechat="/locqi.com/images/wechat_code.jpg">
+                <img class="reward-select-item-wechat" src="/locqi.com/images/wechat.png" alt="微信">
+            </label>
+            
+            
+            <label class="reward-select-item" data-id="alipay" data-alipay="/locqi.com/images/alipay_code.jpg">
+                <img class="reward-select-item-alipay" src="/locqi.com/images/alipay.png" alt="支付宝">
+            </label>
+            
+        </div>
+    </div>
+</div>
+
+
+        
+    </div>
+    <footer class="article-footer">
+        
+        
+<div class="post-share">
+    <a href="javascript:;" id="share-sub" class="post-share-fab">
+        <i class="fa fa-share-alt"></i>
+    </a>
+    <div class="post-share-list" id="share-list">
+        <ul class="share-icons">
+          <li>
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/&title=《Maven详解（八）------ 继承和聚合》 — Locqi&pic=https://locqi.github.io/locqi.comimages/logo.jpg" data-title="微博">
+              <i class="fa fa-weibo"></i>
+            </a>
+          </li>
+          <li>
+            <a class="weixin share-sns" id="wxFab" href="javascript:;" data-title="微信">
+              <i class="fa fa-weixin"></i>
+            </a>
+          </li>
+          <li>
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/&title=《Maven详解（八）------ 继承和聚合》 — Locqi&source=没有最好只有更好" data-title="QQ">
+              <i class="fa fa-qq"></i>
+            </a>
+          </li>
+          <li>
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/" data-title="Facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+          </li>
+          <li>
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Maven详解（八）------ 继承和聚合》 — Locqi&url=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/&via=https://locqi.github.io/locqi.com" data-title="Twitter">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/" data-title="Google+">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        </ul>
+     </div>
+</div>
+<div class="post-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;" id="wxShare-close">×</a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/" alt="微信分享二维码">
+</div>
+
+<div class="mask"></div>
+
+        
+        <ul class="article-footer-menu">
+            
+            
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/locqi.com/tags/Maven技术/" class="color3">Maven技术</a>
+      
+  </li>
+
+        </ul>
+        
+    </footer>
+  </div>
+</article>
+
+
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#目录"><span class="post-toc-text">目录</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#正文"><span class="post-toc-text">正文</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1"><span class="post-toc-text">1、继承</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2、聚合"><span class="post-toc-text">2、聚合</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+
+<nav id="article-nav">
+  
+    <a href="/locqi.com/2018/09/25/use-Axis2-build-webService/" id="article-nav-newer" class="article-nav-link-wrap">
+
+      <span class="article-nav-title">
+        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
+        
+          使用Axis2实现WebService的发布和调用
+        
+      </span>
+    </a>
+  
+  
+    <a href="/locqi.com/2018/09/19/Maven-Detailed-%5B7%5D-Maven-createWebProject-and-plugin-principles/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">Maven详解（七）------ 创建Web工程以及插件原理</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
+  
+</nav>
+
+
+
+    
+        <section id="comments">
+            <div id="disqus_thread">
+                <script type="text/javascript">
+                    var disqus_shortname = 'Locqi';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+            </div>
+        </section>
+    
+</section>
+        
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+      <p>
+      <span class="footer__copyright">
+        &copy; 2020 Locqi - 本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+       
+    </span>
+    </br>
+    <span class="footer__copyright">
+             - 基于 <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> 搭建，使用 <a href="https://blog.minhow.com/ " target="_blank" rel="noopener">miho</a> 主题，由<a href="https://gitee.com/locqi " target="_blank" rel="noopener">@Locqi</a> 修改, 原创出自<a href="https://github.com/WongMinHo/hexo-theme-miho" target="_blank">WongMinHo</a>
+         </span>
+       
+    
+   
+      </p>     
+      
+    </div>
+  </div>
+  
+</footer>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  var mihoConfig = {
+      root: "https://locqi.github.io/locqi.com",
+      animate: true,
+      isHome: false,
+      share: true,
+      reward: 1
+  }
+</script>
+<div class="sidebar">
+    <div id="sidebar-search" title="Search">
+        <i class="fa fa-search"></i>
+    </div>
+    <div id="sidebar-category" title="Categories">
+        <i class="fa fa-book"></i>
+    </div>
+    <div id="sidebar-tag" title="Tags">
+        <i class="fa fa-tags"></i>
+    </div>
+    <div id="sidebar-top">
+        <span class="sidebar-top-icon"><i class="fa fa-angle-up"></i></span>
+    </div>
+</div>
+<div class="sidebar-menu-box" id="sidebar-menu-box">
+    <div class="sidebar-menu-box-container">
+        <div id="sidebar-menu-box-categories">
+            <a class="category-link" href="/locqi.com/categories/Java%E6%8A%80%E6%9C%AF/">Java技术</a><a class="category-link" href="/locqi.com/categories/Maven%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/">Maven系列教程</a><a class="category-link" href="/locqi.com/categories/Web%E6%9C%8D%E5%8A%A1/">Web服务</a><a class="category-link" href="/locqi.com/categories/iOS%E6%8A%80%E6%9C%AF/">iOS技术</a><a class="category-link" href="/locqi.com/categories/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">搭建博客</a>
+        </div>
+        <div id="sidebar-menu-box-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+    <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
+</div>
+<div class="mobile-header-menu-nav" id="mobile-header-menu-nav">
+    <div class="mobile-header-menu-container">
+        <span class="title">Menus</span>
+        <ul class="mobile-header-menu-navbar">
+            
+            <li>
+                <a  href="/locqi.com/">
+                    <i class="fa fa-home"></i><span>Home</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/archives">
+                    <i class="fa fa-archive"></i><span>Archives</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/favourite/time.html">
+                    <i class="fa fa-favourite"></i><span>Time Machine</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/aboutme">
+                    <i class="fa fa-user"></i><span>About</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="mobile-header-tag-container">
+        <span class="title">Tags</span>
+        <div id="mobile-header-container-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+</div>
+<div class="search-wrap">
+    <span class="search-close">&times;</span>
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+            <i class="icon icon-lg icon-chevron-left"></i>
+        </a>
+        <input class="search-field" placeholder="Search..." id="keywords">
+        <a id="search-submit" href="javascript:;">
+            <i class="fa fa-search"></i>
+        </a>
+    <div class="search-container" id="search-container">
+        <ul class="search-result" id="search-result">
+        </ul>
+    </div>
+</div>
+
+<div id="search-tpl">
+    <li class="search-result-item">
+        <a href="{url}" class="search-item-li">
+            <span class="search-item-li-title" title="{title}">{title}</span>
+        </a>
+    </li>
+</div>
+
+<script src="/locqi.com/js/search.js"></script>
+
+
+<script src="/locqi.com/js/main.js"></script>
+
+
+
+  <script src="//cdn.bootcss.com/particles.js/2.0.0/particles.min.js"></script>
+  <div id="particles"></div>
+  
+<script src="/locqi.com/js/particles.js"></script>
+
+
+
+
+<script>
+  var disqus_shortname = 'Locqi';
+  
+  var disqus_url = 'https://locqi.github.io/locqi.com/2018/09/19/Maven-Detailed-[8]-Maven-Inheritance-and-aggregation/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+
+  <script src="//cdn.bootcss.com/scrollReveal.js/3.0.5/scrollreveal.js"></script>
+  
+<script src="/locqi.com/js/animate.js"></script>
+
+
+
+  
+<script src="/locqi.com/js/pop-img.js"></script>
+
+  <script>
+     $(".article-entry p img").popImg();
+  </script>
+
+  </div>
+</body>
+</html>

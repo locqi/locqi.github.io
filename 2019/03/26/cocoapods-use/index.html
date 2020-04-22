@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用CocoaPods管理第三方开源库 | Locqi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="Locqi,Locqi's Blog" />
+  
+  <meta name="description" content="我们开发的时候，常常需要引入一些第三方库（比如：Alamofire、SwiftyJSON 等等）。过去的做法是把这些库下载下来，并引入到工程中。如果有依赖其他库的话，还要手动将这些依赖库给添加进来。关键是如果这些第三方库后面有更新的话，我们还要先把项目中原来的库给删除。再重复前面的步骤。这样就很麻烦了。　　而使用 CocoaPods 以后，这些工作我们都不需要做。只需做好配置工作，安装更新这些">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用CocoaPods管理第三方开源库">
+<meta property="og:url" content="https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/index.html">
+<meta property="og:site_name" content="Locqi">
+<meta property="og:description" content="我们开发的时候，常常需要引入一些第三方库（比如：Alamofire、SwiftyJSON 等等）。过去的做法是把这些库下载下来，并引入到工程中。如果有依赖其他库的话，还要手动将这些依赖库给添加进来。关键是如果这些第三方库后面有更新的话，我们还要先把项目中原来的库给删除。再重复前面的步骤。这样就很麻烦了。　　而使用 CocoaPods 以后，这些工作我们都不需要做。只需做好配置工作，安装更新这些">
+<meta property="og:image" content="https://gitee.com/locqi/locqi.com/raw/master/images/use-CocoaPods/cocoaPods.png?raw=true">
+<meta property="article:published_time" content="2019-03-26T08:06:41.000Z">
+<meta property="article:modified_time" content="2019-10-31T02:47:25.229Z">
+<meta property="article:author" content="Locqi">
+<meta property="article:tag" content="CocoaPods">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/locqi/locqi.com/raw/master/images/use-CocoaPods/cocoaPods.png?raw=true">
+  
+  
+    <link rel="icon" href="/favicon.jpg">
+  
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/locqi.com/css/style.css">
+
+  
+<script src="/locqi.com/js/pace.min.js"></script>
+
+  
+
+  
+  
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+      <header id="header">
+    <div id="banner"></div>
+    <div id="header-outer">
+        <div id="header-menu" class="header-menu-pos animated">
+            <div class="header-menu-container">
+                <a href="/locqi.com/" class="left">
+                    <span class="site-title">Locqi&#39;s Blog</span>
+                </a>
+                <nav id="header-menu-nav" class="right">
+                    
+                    <a  href="/locqi.com/">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/archives">
+                        <i class="fa fa-archive"></i>
+                        <span>Archives</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/favourite/time.html">
+                        <i class="fa fa-favourite"></i>
+                        <span>Time Machine</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/aboutme">
+                        <i class="fa fa-user"></i>
+                        <span>About</span>
+                    </a>
+                    
+                </nav>
+                <a class="mobile-header-menu-button">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        <div id="header-row">
+            <div id="logo">
+                <a href="/locqi.com/">
+                    <img src="/locqi.com/images/logo.jpg" alt="logo">
+                </a>
+            </div>
+            <div class="header-info">
+                <div id="header-title">
+                    
+                    <h2>
+                        Locqi&#39;s Blog
+                    </h2>
+                    
+                </div>
+                <div id="header-description">
+                    
+                    <h3>
+                        世间所有的相遇，都是久别重逢。
+                    </h3>
+                    
+                </div>
+            </div>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a title="Gitee" target="_blank" href="//gitee.com/locqi">
+                            <i class="fa fa-home fa-2x"></i></a>
+                    
+                        <a title="Github" target="_blank" href="//github.com/Locqi">
+                            <i class="fa fa-github fa-2x"></i></a>
+                    
+                        <a title="Weibo" target="_blank" href="//weibo.com/huhu359819176">
+                            <i class="fa fa-weibo fa-2x"></i></a>
+                    
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+      <div class="outer">
+        <section id="main" class="body-wrap"><article id="post-cocoapods-use" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="post-title" itemprop="name">
+      使用CocoaPods管理第三方开源库
+    </h1>
+    <div class="post-title-bar">
+      <ul>
+          
+              <li>
+                  <i class="fa fa-book"></i>
+                  
+                      <a href="/locqi.com/categories/iOS技术/">iOS技术</a>
+                  
+              </li>
+          
+        <li>
+          <i class="fa fa-calendar"></i>  2019-03-26
+        </li>
+        <li>
+          <i class="fa fa-eye"></i>
+          <span id="busuanzi_value_page_pv"></span>
+        </li>
+      </ul>
+    </div>
+  
+
+          
+      </header>
+    
+    <div class="article-entry post-content" itemprop="articleBody">
+      
+            
+            <p>　　我们开发的时候，常常需要引入一些第三方库（比如：<code>Alamofire</code>、<code>SwiftyJSON</code> 等等）。过去的做法是把这些库下载下来，并引入到工程中。如果有依赖其他库的话，还要手动将这些依赖库给添加进来。关键是如果这些第三方库后面有更新的话，我们还要先把项目中原来的库给删除。再重复前面的步骤。这样就很麻烦了。<br>　　而使用 <code>CocoaPods</code> 以后，这些工作我们都不需要做。只需做好配置工作，安装更新这些第三方库，<code>CocoaPods</code> 都会自动帮我们做好。</p>
+<blockquote>
+<h3 id="一、CocoaPods介绍"><a href="#一、CocoaPods介绍" class="headerlink" title="一、CocoaPods介绍"></a>一、CocoaPods介绍</h3></blockquote>
+<p>（1）<code>CocoaPods</code> 是 <code>iOS</code> 开发中的第三方库管理的工具。目的是让我们能自动化的、集中的、直观的管理第三方开源库。　　<br>（2）<code>CocoaPods</code> 能够自动解决库与库之间的依赖关系，下载库的源代码。并创建一个 <code>Xcode</code> 的 <code>workspace</code> 来将这些第三方库和我们的工程连接起来，供我们开发使用。</p>
+<blockquote>
+<h3 id="二、安装CocoaPods"><a href="#二、安装CocoaPods" class="headerlink" title="二、安装CocoaPods"></a>二、安装CocoaPods</h3></blockquote>
+<h4 id="1，替换-Ruby-源"><a href="#1，替换-Ruby-源" class="headerlink" title="1，替换 Ruby 源"></a>1，替换 Ruby 源</h4><p>　　CocoaPods 是基于 Ruby ecosystem 的，需要 Ruby 环境，使用 Ruby 的 gem 命令。所以我们的系统要有 Ruby 环境。然而 Mac 系统默认会安装好 Ruby 环境。可在终端 ruby -v 查看 Ruby 版本：
+　　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 查看 ruby 版本</span><br><span class="line">$ ruby -v</span><br><span class="line">&#x2F;&#x2F; 输出信息</span><br><span class="line">ruby 2.3.7p456 (2018-03-28 revision 63024) [universal.x86_64-darwin18]</span><br></pre></td></tr></table></figure>
+
+<p>查看 Ruby 源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gem sources -l</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，终端会显示下面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">*** CURRENT SOURCES ***</span><br><span class="line">https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>当然这个源在墙内是访问不到的, 所以要更换到 ruby-china 的镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 1.移除掉原有的源</span><br><span class="line">$ gem sources --remove https:&#x2F;&#x2F;rubygems.org&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 2.使用 ruby-china 的源哦</span><br><span class="line">$ gem sources -a https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br><span class="line">https:&#x2F;&#x2F;gems.ruby-china.com&#x2F; added to sources</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 3.验证是否替换成功</span><br><span class="line">$ gem sources -l</span><br><span class="line">&#x2F;&#x2F; 如果显示下面输出就说明正确：</span><br><span class="line">*** CURRENT SOURCES ***</span><br><span class="line">https:&#x2F;&#x2F;gems.ruby-china.com&#x2F;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2，更新升级-Gem-版本"><a href="#2，更新升级-Gem-版本" class="headerlink" title="2，更新升级 Gem 版本"></a>2，更新升级 Gem 版本</h4><p>　　Gem 是管理 Ruby 库和程序的标准包，如果它的版本过低也可能导致安装失败，解决方案自然是升级 Gem，执行下述命令即可:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 更新升级 gem，国内需要切换源</span><br><span class="line">$ sudo gem update --system</span><br></pre></td></tr></table></figure>
+<p>查看 gem 版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ gem -v</span><br><span class="line">3.0.3</span><br></pre></td></tr></table></figure>
+
+<h4 id="3，安装-CocoaPods"><a href="#3，安装-CocoaPods" class="headerlink" title="3，安装 CocoaPods"></a>3，安装 CocoaPods</h4><p>OS X 10.11 以前安装命令为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo gem install cocoapods  &#x2F;&#x2F; 安装cocoapods</span><br><span class="line"></span><br><span class="line">$ sudo gem update cocoapods  &#x2F;&#x2F; 更新升级cocoapods</span><br></pre></td></tr></table></figure>
+
+<p>Mac 系统为 OS X EL Capitan 以后安装命令为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 安装最新版本</span><br><span class="line">$ sudo gem install -n &#x2F;usr&#x2F;local&#x2F;bin cocoapods</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 安装指定版本</span><br><span class="line">$ sudo gem install -n &#x2F;usr&#x2F;local&#x2F;bin cocoapods -v 1.0.0 </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 安装最新的 release beta 版本</span><br><span class="line">$ sudo gem install -n &#x2F;usr&#x2F;local&#x2F;bin cocoapods --pre</span><br></pre></td></tr></table></figure>
+<p>如果你想卸载 CocoaPods 怎么办？看下面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; OS X 10.11 以前卸载 CocoaPods</span><br><span class="line">$ sudo gem uninstall cocoapods</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; OS X EL Capitan 以后卸载 CocoaPods</span><br><span class="line">$ sudo gem uninstall -n &#x2F;usr&#x2F;local&#x2F;bin cocoapods</span><br></pre></td></tr></table></figure>
+
+<h4 id="4，更新-Podspec-索引文件"><a href="#4，更新-Podspec-索引文件" class="headerlink" title="4，更新 Podspec 索引文件"></a>4，更新 Podspec 索引文件</h4><p>　　如果按照上面三个步骤没问题，用命令 pod –version 查看是否安装成功，如果成功会显示 pods 的版本。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ pod --version</span><br><span class="line">1.7.5</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>pod setup 作用：</code></strong>将所有第三方的 Podspec 索引文件更新到本地的 ~/.cocoapods/repos 目录下</p>
+<p>pod 安装成功之后一个首先的操作就是执行命令（不是必须的）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pod setup</span><br></pre></td></tr></table></figure>
+<p>　　所有的第三方开源库的 Podspec 文件都托管在<a href="https://github.com/CocoaPods/Specs" target="_blank" rel="noopener">https://github.com/CocoaPods/Specs</a><br>我们需要把这个 Podspec 文件保存到本地，这样才能让我们使用命令 pod search 开源库搜索一个开源库，怎样才能把github上的Podspec文件保存本地呢？那就是 pod setup</p>
+<blockquote>
+<p>执行 pod setup 时，CocoaPods 会将第三方的 podspec 索引文件更新到本地的 ~/.cocoapods/repos 目录下</p>
+</blockquote>
+<ul>
+<li><p>如果没有执行过 pod setup，那用户根目录下～找不到.cocoapods/repos目录的，没有创建这个目录。</p>
+</li>
+<li><p>如果执行 pod setup，并且命令没有执行成功，那么会创建~/.cocoapods/repos目录，只不过目录是空的。</p>
+</li>
+<li><p>如果执行 pod setup，并且命令执行成功，说明把 <code>github</code>上的 Podsepc 文件更新到本地，那么会创建~/.cocoapods/repos 目录，并且 repos目录 里有一个 master目录 ，这个 <code>master</code> 目录保存的就是 github 上所有第三方开源库的 Podspec 索引文件。</p>
+</li>
+</ul>
+<p>　　但是第一次执行 pod setup 时，这个 github 的 Podspec 索引文件比较大，有 300M 左右(以后会越来越大的)，所以第一次更新时非常慢.要耐心等待……可以进去目录 <code>~/.cocoapods/repos</code> 使用命令 <code>du -sh *</code> 来查看下载文件的大小了</p>
+<blockquote>
+<h3 id="三、CocoaPods的使用"><a href="#三、CocoaPods的使用" class="headerlink" title="三、CocoaPods的使用"></a>三、CocoaPods的使用</h3></blockquote>
+<p>下面我们创建一个工程项目（假设工程名是 <code>SwiftDemo</code>），演示如何使用 <code>CocoaPods</code> 自动下载、导入、配置第三方库。</p>
+<h4 id="1，创建Podfile"><a href="#1，创建Podfile" class="headerlink" title="1，创建Podfile"></a>1，创建Podfile</h4><p>　　首先进入到工程的根目录下，创建空白的<code>Podfile</code> 文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd SwiftDemo&#x2F;</span><br><span class="line">$ pod init</span><br></pre></td></tr></table></figure>
+
+<h4 id="2，编辑Podfile"><a href="#2，编辑Podfile" class="headerlink" title="2，编辑Podfile"></a>2，编辑Podfile</h4><p><code>Podfile文件编辑时，第三方库版本号的各种写法</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">pod &#39;AFNetworking&#39; &#x2F;&#x2F;不显式指定依赖库版本，表示每次都获取最新版本</span><br><span class="line">pod &#39;AFNetworking&#39;, &#39;2.0&#39; &#x2F;&#x2F;只使用2.0版本</span><br><span class="line">pod &#39;AFNetworking&#39;, &#39;&gt;2.0&#39; &#x2F;&#x2F;使用高于2.0的版本</span><br><span class="line">pod &#39;AFNetworking&#39;, &#39;&gt;&#x3D;2.0&#39; &#x2F;&#x2F;使用大于或等于2.0的版本</span><br><span class="line">pod &#39;AFNetworking&#39;, &#39;&lt;2.0&#39; &#x2F;&#x2F;使用小于2.0的版本</span><br><span class="line">pod &#39;AFNetworking&#39;, &#39;&lt;&#x3D;2.0&#39; &#x2F;&#x2F;使用小于或等于2.0的版本</span><br><span class="line">pod &#39;AFNetworking&#39;, &#39;~&gt;0.1.2&#39; &#x2F;&#x2F;使用大于等于0.1.2但小于0.2的版本，相当于&gt;&#x3D;0.1.2并且&lt;0.2.0</span><br><span class="line">pod &#39;AFNetworking&#39;, &#39;~&gt;0.1&#39; &#x2F;&#x2F;使用大于等于0.1但小于1.0的版本</span><br><span class="line">pod &#39;AFNetworking&#39;, &#39;~&gt;0&#39; &#x2F;&#x2F;高于0的版本，写这个限制和什么都不写是一个效果，都表示使用最新版本</span><br></pre></td></tr></table></figure>
+
+<p>　　我们在 <code>Podfile</code> 文件中写上需要引入的第三方库，这里以 <code>Alamofire</code>、<code>SwiftyJSON</code> 这两个库为例。<br>（注意：<code>Alamofire</code> 自<code>4.0</code>版本起，<code>SwiftyJSON</code> 自<code>3.0</code>版本起，都可以支持 <code>Swift3</code>。）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"># Uncomment the next line to define a global platform for your project</span><br><span class="line">platform :ios, &#39;9.0&#39;</span><br><span class="line"></span><br><span class="line">target &#39;SwiftDemo&#39; do</span><br><span class="line">  # Comment the next line if you&#39;re not using Swift and don&#39;t want to use dynamic frameworks</span><br><span class="line">  use_frameworks!</span><br><span class="line">    pod &#39;Alamofire&#39;, &#39;~&gt; 4.0&#39;</span><br><span class="line">    pod &#39;SwiftyJSON&#39;, &#39;~&gt; 3.0&#39;</span><br><span class="line">  # Pods for SwiftDemo</span><br><span class="line"></span><br><span class="line">  target &#39;SwiftDemoTests&#39; do</span><br><span class="line">    inherit! :search_paths</span><br><span class="line">    # Pods for testing</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  target &#39;SwiftDemoUITests&#39; do</span><br><span class="line">    inherit! :search_paths</span><br><span class="line">    # Pods for testing</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h4 id="3，开始导入库"><a href="#3，开始导入库" class="headerlink" title="3，开始导入库"></a>3，开始导入库</h4><p>（1）执行下面命令，开始导入前面配置的第三方库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pod install</span><br></pre></td></tr></table></figure>
+<p>（2）执行成功后。看到工程根目录下多了三个新文件：<code>SwiftDemo.xcworkspace</code>、<code>Podfile.lock</code> 文件、<code>Pods</code> 目录。</p>
+<p>（3）pod install提速<br>　　每次执行<code>pod install</code> 和<code>pod update</code>的时候，<code>cocoapods</code>都会默认更新一次<code>spec仓库</code>。这是一个比较耗时的操作。在确认<code>spec版本库</code>不需要更新时，给这两个命令加一个参数跳过<code>spec版本库</code>更新,可以明显提高这两个命令的执行速度。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pod install --verbose --no-repo-update</span><br><span class="line">pod update --verbose --no-repo-update</span><br></pre></td></tr></table></figure>
+
+<h4 id="4，打开新生成的SwiftDemo-xcworkspace"><a href="#4，打开新生成的SwiftDemo-xcworkspace" class="headerlink" title="4，打开新生成的SwiftDemo.xcworkspace"></a>4，打开新生成的SwiftDemo.xcworkspace</h4><p>（1）往后我们就需要使用这个新生成的 <code>SwiftDemo.xcworkspace</code> 文件来开发。因为原来的工程（<code>SwiftDemo.xcodeproj</code>）设置已经被更改了，如果我们直接打开原来的工程文件去编译就会报错。<br>（2）打开后可以看到里面除了我们项目工程，还有一个 <code>Pods</code> 工程。整个结构还是很清晰明了的。
+　　</p>
+<h4 id="5，测试代码"><a href="#5，测试代码" class="headerlink" title="5，测试代码"></a>5，测试代码</h4><p>　　开发时，我们只需要在使用的时候 <code>import</code> 一下需要的库就可以了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">import UIKit</span><br><span class="line">import Alamofire</span><br><span class="line"></span><br><span class="line">class ViewController: UIViewController &#123;</span><br><span class="line"></span><br><span class="line">    override func viewDidLoad() &#123;</span><br><span class="line">        super.viewDidLoad()</span><br><span class="line">        &#x2F;&#x2F; Do any additional setup after loading the view.</span><br><span class="line">        Alamofire.request(&quot;https:&#x2F;&#x2F;www.baidu.com&#x2F;img&#x2F;bd_logo1.png&quot;)</span><br><span class="line">            .responseString &#123; response in</span><br><span class="line">                print(&quot;Success: \(response.result.isSuccess)&quot;)</span><br><span class="line">                print(&quot;Response Data count: \(String(describing: response.data!.count))&quot;)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="6，新增或移除第三方库"><a href="#6，新增或移除第三方库" class="headerlink" title="6，新增或移除第三方库"></a>6，新增或移除第三方库</h4><p>　　以后如果需要在工程中导入新库，或者移除原有的库。还是先编辑 <code>Podfile</code> 文件，再执行 <code>install</code> 命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pod install</span><br></pre></td></tr></table></figure>
+<h4 id="7，更新第三方库"><a href="#7，更新第三方库" class="headerlink" title="7，更新第三方库"></a>7，更新第三方库</h4><p>　　如果引用的库没有改变，只是想要将这些库更新到最新版本，则执行 <code>update</code> 命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pod update</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<h3 id="四、导入Objective-C写的第三方库"><a href="#四、导入Objective-C写的第三方库" class="headerlink" title="四、导入Objective-C写的第三方库"></a>四、导入Objective-C写的第三方库</h3></blockquote>
+<p>　　上面的样例我们是创建工 <code>Swift</code> 工程，并导入 <code>Swift</code> 语言写的第三方库。如果想要在 <code>Swift</code> 工程中引入 <code>OC</code> 写的第三方库，操作也是一样的。而且我们项目中不需要像过去一样创建桥接头文件，把<code>Objective-C</code>头文件引用进来。<br>这里以 <code>OC</code> 写的图片缓存库：<code>SDWebImage</code> 为例说明。</p>
+<h4 id="1，编辑Podfile文件"><a href="#1，编辑Podfile文件" class="headerlink" title="1，编辑Podfile文件"></a>1，编辑Podfile文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># Uncomment the next line to define a global platform for your project</span><br><span class="line">platform :ios, &#39;9.0&#39;</span><br><span class="line"></span><br><span class="line">target &#39;SwiftDemo&#39; do</span><br><span class="line">  # Comment the next line if you&#39;re not using Swift and don&#39;t want to use dynamic frameworks</span><br><span class="line">  use_frameworks!</span><br><span class="line">    pod &#39;Alamofire&#39;, &#39;~&gt; 4.0&#39;</span><br><span class="line">    pod &#39;SwiftyJSON&#39;, &#39;~&gt; 3.0&#39;</span><br><span class="line">    pod &#39;SDWebImage&#39;</span><br><span class="line">  # Pods for SwiftDemo</span><br><span class="line"></span><br><span class="line">  target &#39;SwiftDemoTests&#39; do</span><br><span class="line">    inherit! :search_paths</span><br><span class="line">    # Pods for testing</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">  target &#39;SwiftDemoUITests&#39; do</span><br><span class="line">    inherit! :search_paths</span><br><span class="line">    # Pods for testing</span><br><span class="line">  end</span><br><span class="line"></span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h4 id="2，执行安装命令"><a href="#2，执行安装命令" class="headerlink" title="2，执行安装命令"></a>2，执行安装命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pod install</span><br></pre></td></tr></table></figure>
+
+<h4 id="3，代码中直接将SDWebImage库import就能使用"><a href="#3，代码中直接将SDWebImage库import就能使用" class="headerlink" title="3，代码中直接将SDWebImage库import就能使用"></a>3，代码中直接将SDWebImage库import就能使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">import UIKit</span><br><span class="line">import Alamofire</span><br><span class="line">import SDWebImage</span><br><span class="line"></span><br><span class="line">class ViewController: UIViewController &#123;</span><br><span class="line">    </span><br><span class="line">    override func viewDidLoad() &#123;</span><br><span class="line">        super.viewDidLoad()</span><br><span class="line">        &#x2F;&#x2F; Do any additional setup after loading the view.</span><br><span class="line">        Alamofire.request(&quot;https:&#x2F;&#x2F;www.baidu.com&#x2F;img&#x2F;bd_logo1.png&quot;)</span><br><span class="line">            .responseString &#123; response in</span><br><span class="line">                print(&quot;Success: \(response.result.isSuccess)&quot;)</span><br><span class="line">                print(&quot;Response Data count: \(String(describing: response.data!.count))&quot;)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        let imageView &#x3D; UIImageView()</span><br><span class="line">        imageView.frame &#x3D; CGRect(x:50, y:50, width:200, height:100)</span><br><span class="line">        self.view.addSubview(imageView)</span><br><span class="line">        </span><br><span class="line">        let url &#x3D; URL(string: &quot;https:&#x2F;&#x2F;www.baidu.com&#x2F;img&#x2F;bd_logo1.png&quot;)</span><br><span class="line">        imageView.sd_setImage(with: url)</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/locqi/locqi.com/raw/master/images/use-CocoaPods/cocoaPods.png?raw=true" alt="cocoaPods.png"></p>
+
+            <div class="post-copyright">
+    <div class="content">
+        <p>最后更新： 2019年10月31日 10:47</p>
+        <!--<p>原始链接： <a class="post-url" href="/locqi.com/2019/03/26/cocoapods-use/" title="使用CocoaPods管理第三方开源库">https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/</a></p>-->
+        <footer>
+            <a href="https://locqi.github.io/locqi.com">
+                <img src="/locqi.com/images/logo.jpg" alt="Locqi">
+                Locqi
+            </a>
+        </footer>
+    </div>
+</div>
+
+      
+        
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;">赏</a>
+</div>
+
+<div id="reward" class="post-modal reward-lay">
+    <a class="close" href="javascript:;" id="reward-close">×</a>
+    <span class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        请我吃糖~
+        <i class="icon icon-quote-right"></i>
+    </span>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/locqi.com/images/wechat_code.jpg" alt="打赏二维码">
+        </div>
+        <div class="reward-select">
+            
+            <label class="reward-select-item checked" data-id="wechat" data-wechat="/locqi.com/images/wechat_code.jpg">
+                <img class="reward-select-item-wechat" src="/locqi.com/images/wechat.png" alt="微信">
+            </label>
+            
+            
+            <label class="reward-select-item" data-id="alipay" data-alipay="/locqi.com/images/alipay_code.jpg">
+                <img class="reward-select-item-alipay" src="/locqi.com/images/alipay.png" alt="支付宝">
+            </label>
+            
+        </div>
+    </div>
+</div>
+
+
+        
+    </div>
+    <footer class="article-footer">
+        
+        
+<div class="post-share">
+    <a href="javascript:;" id="share-sub" class="post-share-fab">
+        <i class="fa fa-share-alt"></i>
+    </a>
+    <div class="post-share-list" id="share-list">
+        <ul class="share-icons">
+          <li>
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/&title=《使用CocoaPods管理第三方开源库》 — Locqi&pic=https://locqi.github.io/locqi.comimages/logo.jpg" data-title="微博">
+              <i class="fa fa-weibo"></i>
+            </a>
+          </li>
+          <li>
+            <a class="weixin share-sns" id="wxFab" href="javascript:;" data-title="微信">
+              <i class="fa fa-weixin"></i>
+            </a>
+          </li>
+          <li>
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/&title=《使用CocoaPods管理第三方开源库》 — Locqi&source=没有最好只有更好" data-title="QQ">
+              <i class="fa fa-qq"></i>
+            </a>
+          </li>
+          <li>
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/" data-title="Facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+          </li>
+          <li>
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用CocoaPods管理第三方开源库》 — Locqi&url=https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/&via=https://locqi.github.io/locqi.com" data-title="Twitter">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/" data-title="Google+">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        </ul>
+     </div>
+</div>
+<div class="post-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;" id="wxShare-close">×</a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/" alt="微信分享二维码">
+</div>
+
+<div class="mask"></div>
+
+        
+        <ul class="article-footer-menu">
+            
+            
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/locqi.com/tags/CocoaPods/" class="color5">CocoaPods</a>
+      
+  </li>
+
+        </ul>
+        
+    </footer>
+  </div>
+</article>
+
+
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一、CocoaPods介绍"><span class="post-toc-text">一、CocoaPods介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二、安装CocoaPods"><span class="post-toc-text">二、安装CocoaPods</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1，替换-Ruby-源"><span class="post-toc-text">1，替换 Ruby 源</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2，更新升级-Gem-版本"><span class="post-toc-text">2，更新升级 Gem 版本</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3，安装-CocoaPods"><span class="post-toc-text">3，安装 CocoaPods</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4，更新-Podspec-索引文件"><span class="post-toc-text">4，更新 Podspec 索引文件</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三、CocoaPods的使用"><span class="post-toc-text">三、CocoaPods的使用</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1，创建Podfile"><span class="post-toc-text">1，创建Podfile</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2，编辑Podfile"><span class="post-toc-text">2，编辑Podfile</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3，开始导入库"><span class="post-toc-text">3，开始导入库</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4，打开新生成的SwiftDemo-xcworkspace"><span class="post-toc-text">4，打开新生成的SwiftDemo.xcworkspace</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#5，测试代码"><span class="post-toc-text">5，测试代码</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#6，新增或移除第三方库"><span class="post-toc-text">6，新增或移除第三方库</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#7，更新第三方库"><span class="post-toc-text">7，更新第三方库</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四、导入Objective-C写的第三方库"><span class="post-toc-text">四、导入Objective-C写的第三方库</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1，编辑Podfile文件"><span class="post-toc-text">1，编辑Podfile文件</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2，执行安装命令"><span class="post-toc-text">2，执行安装命令</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3，代码中直接将SDWebImage库import就能使用"><span class="post-toc-text">3，代码中直接将SDWebImage库import就能使用</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+
+<nav id="article-nav">
+  
+    <a href="/locqi.com/2020/04/22/OTA-online-install-ipa/" id="article-nav-newer" class="article-nav-link-wrap">
+
+      <span class="article-nav-title">
+        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
+        
+          iOS开发:OTA 在线安装APP
+        
+      </span>
+    </a>
+  
+  
+    <a href="/locqi.com/2019/03/14/SSL-pinning-4-iOS-APP/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">iOS开发:校验HTTPS网络请求证书(SSL证书和自签名证书)</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
+  
+</nav>
+
+
+
+    
+        <section id="comments">
+            <div id="disqus_thread">
+                <script type="text/javascript">
+                    var disqus_shortname = 'Locqi';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+            </div>
+        </section>
+    
+</section>
+        
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+      <p>
+      <span class="footer__copyright">
+        &copy; 2020 Locqi - 本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+       
+    </span>
+    </br>
+    <span class="footer__copyright">
+             - 基于 <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> 搭建，使用 <a href="https://blog.minhow.com/ " target="_blank" rel="noopener">miho</a> 主题，由<a href="https://gitee.com/locqi " target="_blank" rel="noopener">@Locqi</a> 修改, 原创出自<a href="https://github.com/WongMinHo/hexo-theme-miho" target="_blank">WongMinHo</a>
+         </span>
+       
+    
+   
+      </p>     
+      
+    </div>
+  </div>
+  
+</footer>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  var mihoConfig = {
+      root: "https://locqi.github.io/locqi.com",
+      animate: true,
+      isHome: false,
+      share: true,
+      reward: 1
+  }
+</script>
+<div class="sidebar">
+    <div id="sidebar-search" title="Search">
+        <i class="fa fa-search"></i>
+    </div>
+    <div id="sidebar-category" title="Categories">
+        <i class="fa fa-book"></i>
+    </div>
+    <div id="sidebar-tag" title="Tags">
+        <i class="fa fa-tags"></i>
+    </div>
+    <div id="sidebar-top">
+        <span class="sidebar-top-icon"><i class="fa fa-angle-up"></i></span>
+    </div>
+</div>
+<div class="sidebar-menu-box" id="sidebar-menu-box">
+    <div class="sidebar-menu-box-container">
+        <div id="sidebar-menu-box-categories">
+            <a class="category-link" href="/locqi.com/categories/Java%E6%8A%80%E6%9C%AF/">Java技术</a><a class="category-link" href="/locqi.com/categories/Maven%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/">Maven系列教程</a><a class="category-link" href="/locqi.com/categories/Web%E6%9C%8D%E5%8A%A1/">Web服务</a><a class="category-link" href="/locqi.com/categories/iOS%E6%8A%80%E6%9C%AF/">iOS技术</a><a class="category-link" href="/locqi.com/categories/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">搭建博客</a>
+        </div>
+        <div id="sidebar-menu-box-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+    <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
+</div>
+<div class="mobile-header-menu-nav" id="mobile-header-menu-nav">
+    <div class="mobile-header-menu-container">
+        <span class="title">Menus</span>
+        <ul class="mobile-header-menu-navbar">
+            
+            <li>
+                <a  href="/locqi.com/">
+                    <i class="fa fa-home"></i><span>Home</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/archives">
+                    <i class="fa fa-archive"></i><span>Archives</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/favourite/time.html">
+                    <i class="fa fa-favourite"></i><span>Time Machine</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/aboutme">
+                    <i class="fa fa-user"></i><span>About</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="mobile-header-tag-container">
+        <span class="title">Tags</span>
+        <div id="mobile-header-container-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+</div>
+<div class="search-wrap">
+    <span class="search-close">&times;</span>
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+            <i class="icon icon-lg icon-chevron-left"></i>
+        </a>
+        <input class="search-field" placeholder="Search..." id="keywords">
+        <a id="search-submit" href="javascript:;">
+            <i class="fa fa-search"></i>
+        </a>
+    <div class="search-container" id="search-container">
+        <ul class="search-result" id="search-result">
+        </ul>
+    </div>
+</div>
+
+<div id="search-tpl">
+    <li class="search-result-item">
+        <a href="{url}" class="search-item-li">
+            <span class="search-item-li-title" title="{title}">{title}</span>
+        </a>
+    </li>
+</div>
+
+<script src="/locqi.com/js/search.js"></script>
+
+
+<script src="/locqi.com/js/main.js"></script>
+
+
+
+  <script src="//cdn.bootcss.com/particles.js/2.0.0/particles.min.js"></script>
+  <div id="particles"></div>
+  
+<script src="/locqi.com/js/particles.js"></script>
+
+
+
+
+<script>
+  var disqus_shortname = 'Locqi';
+  
+  var disqus_url = 'https://locqi.github.io/locqi.com/2019/03/26/cocoapods-use/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+
+  <script src="//cdn.bootcss.com/scrollReveal.js/3.0.5/scrollreveal.js"></script>
+  
+<script src="/locqi.com/js/animate.js"></script>
+
+
+
+  
+<script src="/locqi.com/js/pop-img.js"></script>
+
+  <script>
+     $(".article-entry p img").popImg();
+  </script>
+
+  </div>
+</body>
+</html>

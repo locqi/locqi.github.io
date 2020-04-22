@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Maven详解（五）------ 坐标的概念以及依赖管理 | Locqi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="Locqi,Locqi's Blog" />
+  
+  <meta name="description" content="目录 1、什么是坐标？　 2、什么是依赖？ 3、依赖的详细配置 4、依赖的范围 scope 5、依赖的传递 6、依赖的排除 7、依赖的冲突 8、可选依赖  正文　　我们知道maven能帮我们管理jar包，那么它是怎么管理的呢？这篇文章我们来详细介绍下。 [回到顶部](#jumpDirectory)   1、什么是坐标？  ①、数学中的坐标　　在平面上，使用 X 、Y 两个向量可以唯一的定位平面中的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Maven详解（五）------ 坐标的概念以及依赖管理">
+<meta property="og:url" content="https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/index.html">
+<meta property="og:site_name" content="Locqi">
+<meta property="og:description" content="目录 1、什么是坐标？　 2、什么是依赖？ 3、依赖的详细配置 4、依赖的范围 scope 5、依赖的传递 6、依赖的排除 7、依赖的冲突 8、可选依赖  正文　　我们知道maven能帮我们管理jar包，那么它是怎么管理的呢？这篇文章我们来详细介绍下。 [回到顶部](#jumpDirectory)   1、什么是坐标？  ①、数学中的坐标　　在平面上，使用 X 、Y 两个向量可以唯一的定位平面中的">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/gav.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-gav.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/scope.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/junit-scope.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/create-MavenTest-javafile.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/junit-test-class-error.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/scope-is-compile.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/mvn-compile-no-error.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-first-second-third.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/first-second-third.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-first-pom.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-second-pom.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-third-pom.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/none-Junit.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven_first-scope-is-compile.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-first-add-spring-core.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-first-and-second-has-spring-core-jar.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-second-pom-exclusions-jar.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/commons-logging-jar-exclusions.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/junit-4.8-jar-same.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/commons-logging-version-is-1.2.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-second-commons-logg-ver-is-1.2.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/optional-is-true.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/optional-set-true-none-junitJAR.png?raw=true">
+<meta property="article:published_time" content="2018-09-17T01:52:50.000Z">
+<meta property="article:modified_time" content="2018-09-19T07:41:30.000Z">
+<meta property="article:author" content="Locqi">
+<meta property="article:tag" content="Maven技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/gav.png?raw=true">
+  
+  
+    <link rel="icon" href="/favicon.jpg">
+  
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/locqi.com/css/style.css">
+
+  
+<script src="/locqi.com/js/pace.min.js"></script>
+
+  
+
+  
+  
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+      <header id="header">
+    <div id="banner"></div>
+    <div id="header-outer">
+        <div id="header-menu" class="header-menu-pos animated">
+            <div class="header-menu-container">
+                <a href="/locqi.com/" class="left">
+                    <span class="site-title">Locqi&#39;s Blog</span>
+                </a>
+                <nav id="header-menu-nav" class="right">
+                    
+                    <a  href="/locqi.com/">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/archives">
+                        <i class="fa fa-archive"></i>
+                        <span>Archives</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/favourite/time.html">
+                        <i class="fa fa-favourite"></i>
+                        <span>Time Machine</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/aboutme">
+                        <i class="fa fa-user"></i>
+                        <span>About</span>
+                    </a>
+                    
+                </nav>
+                <a class="mobile-header-menu-button">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        <div id="header-row">
+            <div id="logo">
+                <a href="/locqi.com/">
+                    <img src="/locqi.com/images/logo.jpg" alt="logo">
+                </a>
+            </div>
+            <div class="header-info">
+                <div id="header-title">
+                    
+                    <h2>
+                        Locqi&#39;s Blog
+                    </h2>
+                    
+                </div>
+                <div id="header-description">
+                    
+                    <h3>
+                        世间所有的相遇，都是久别重逢。
+                    </h3>
+                    
+                </div>
+            </div>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a title="Gitee" target="_blank" href="//gitee.com/locqi">
+                            <i class="fa fa-home fa-2x"></i></a>
+                    
+                        <a title="Github" target="_blank" href="//github.com/Locqi">
+                            <i class="fa fa-github fa-2x"></i></a>
+                    
+                        <a title="Weibo" target="_blank" href="//weibo.com/huhu359819176">
+                            <i class="fa fa-weibo fa-2x"></i></a>
+                    
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+      <div class="outer">
+        <section id="main" class="body-wrap"><article id="post-Maven-Detailed-[5]-coordinate-concept-and-dependManage" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="post-title" itemprop="name">
+      Maven详解（五）------ 坐标的概念以及依赖管理
+    </h1>
+    <div class="post-title-bar">
+      <ul>
+          
+              <li>
+                  <i class="fa fa-book"></i>
+                  
+                      <a href="/locqi.com/categories/Maven系列教程/">Maven系列教程</a>
+                  
+              </li>
+          
+        <li>
+          <i class="fa fa-calendar"></i>  2018-09-17
+        </li>
+        <li>
+          <i class="fa fa-eye"></i>
+          <span id="busuanzi_value_page_pv"></span>
+        </li>
+      </ul>
+    </div>
+  
+
+          
+      </header>
+    
+    <div class="article-entry post-content" itemprop="articleBody">
+      
+            
+            <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a><span id="jumpDirectory">目录</span></h2><ul>
+<li><a href="#1">1、什么是坐标？</a>　</li>
+<li><a href="#2">2、什么是依赖？</a></li>
+<li><a href="#3">3、依赖的详细配置</a></li>
+<li><a href="#4">4、依赖的范围 scope</a></li>
+<li><a href="#5">5、依赖的传递</a></li>
+<li><a href="#6">6、依赖的排除</a></li>
+<li><a href="#7">7、依赖的冲突</a></li>
+<li><a href="#8">8、可选依赖</a></li>
+</ul>
+<h2 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h2><p>　　我们知道maven能帮我们管理jar包，那么它是怎么管理的呢？这篇文章我们来详细介绍下。</p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="1">1、什么是坐标？</h3>
+</blockquote>
+<h4 id="①、数学中的坐标"><a href="#①、数学中的坐标" class="headerlink" title="①、数学中的坐标"></a>①、数学中的坐标</h4><p>　　在平面上，使用 X 、Y 两个向量可以唯一的定位平面中的任何一个点</p>
+<p>　　在空间中，使用 X、Y、Z 三个向量可以唯一的定位空间中的任意一个点</p>
+<h4 id="②、Maven-中的坐标"><a href="#②、Maven-中的坐标" class="headerlink" title="②、Maven 中的坐标"></a>②、Maven 中的坐标</h4><p>　　俗称 gav：使用下面三个向量子仓库中唯一定位一个 Maven 工程</p>
+<p>　　在项目中的 pom.xml 文件中，我们可以看到下面gav的定义：</p>
+<p>　　1、groupid:公司或组织域名倒序</p>
+<p>　　<strong><code>&lt;groupid&gt;</code>com.locqi<code>&lt;/groupid&gt;</code></strong></p>
+<p>　　2、artifactid:模块名，也是实际项目的名称</p>
+<p>　　<strong><code>&lt;artifactid&gt;</code>helloMaven<code>&lt;/artifactid&gt;</code></strong></p>
+<p>　　3、version:当前项目的版本</p>
+<p>　　<strong><code>&lt;version&gt;</code>0.0.1-SNAPSHOT<code>&lt;/version&gt;</code></strong><br>　　　　　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/gav.png?raw=true" alt="gav.png">
+　　</p>
+<h4 id="③、Maven-坐标和仓库，jar-包的关系"><a href="#③、Maven-坐标和仓库，jar-包的关系" class="headerlink" title="③、Maven 坐标和仓库，jar 包的关系"></a>③、Maven 坐标和仓库，jar 包的关系</h4><p>　　什么是仓库，后面我们会详细讲解，现在你只需要知道是Maven 用来存放 jar 包的地方。</p>
+<p>　　那么依照上面定义的 gav，我们执行 mvn -install 命令，会出现什么情况呢？</p>
+<p>　　首先进入到我们第二篇博客<a href="https://locqi.gitee.io/locqi.com/2018/09/13/Maven-Detailed-[2]-Maven-installAndConfigure/" target="_blank" rel="noopener">Maven 的安装配置</a>，通过 settings.xml 文件配置的仓库目录。</p>
+<p>　　将我们上面配置的 gav 向量组合起来就是目录：</p>
+<p>　　com/locqi/helloMaven/helloMaven-0.0.1-SNAPSHOT.jar</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-gav.png?raw=true" alt="maven-gav.png"></p>
+<p>　　其次，我们观察打出来的 jar 包：</p>
+<p>　　helloMaven-0.0.1-SNAPSHOT.jar</p>
+<p>　　也就是 artifactid-version.jar</p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="2、什么是依赖？"><a href="#2、什么是依赖？" class="headerlink" title="2、什么是依赖？"></a><span id="2">2、什么是依赖？</span></h3></blockquote>
+<p>　　什么是 依赖？相信有过一定开发经验的人知道，每当我们需要使用某个框架时，比如 SpringMVC，那么我们需要导入相应的 jar 包，但是手动导入包的时候，往往会漏掉几个 jar 包，那么在使用该框架的时候系统就会报错。那么我们就说导入的包与未导入的包存在依赖关系。而使用 Maven,我们只需要在 pom.xml 文件中进行相应的配置，它就会帮助我们自动管理 jar 包之间的依赖关系。那么它是怎么管理的呢，接下来我们会详细讲解。</p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="3、依赖的详细配置"><a href="#3、依赖的详细配置" class="headerlink" title="3、依赖的详细配置"></a><span id="3">3、依赖的详细配置</span></h3></blockquote>
+<p>　　我们以 Junit 为例，在 pom.xml 文件中进行详细而完整的配置。　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;project&gt;     </span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;junit&lt;&#x2F;groupId&gt;     </span><br><span class="line">            &lt;artifactId&gt;junit&lt;&#x2F;artifactId&gt;     </span><br><span class="line">            &lt;version&gt;3.8.1&lt;&#x2F;version&gt;</span><br><span class="line">            &lt;type&gt;...&lt;&#x2F;type&gt;</span><br><span class="line">            &lt;scope&gt;...&lt;&#x2F;scope&gt;</span><br><span class="line">            &lt;optional&gt;...&lt;&#x2F;optional&gt;</span><br><span class="line">            &lt;exclusions&gt;     </span><br><span class="line">                &lt;exclusion&gt;     </span><br><span class="line">                  &lt;groupId&gt;...&lt;&#x2F;groupId&gt;     </span><br><span class="line">                  &lt;artifactId&gt;...&lt;&#x2F;artifactId&gt;     </span><br><span class="line">                &lt;&#x2F;exclusion&gt;</span><br><span class="line">          &lt;&#x2F;exclusions&gt;     </span><br><span class="line">        &lt;&#x2F;dependency&gt;        </span><br><span class="line">      &lt;&#x2F;dependencies&gt;     </span><br><span class="line">&lt;&#x2F;project&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　①、dependencies：一个 pom.xml 文件中只能存在一个这样的标签。用来管理依赖的总标签。</p>
+<p>　　②、dependency:包含在dependencies标签中，可以有无数个，每一个表示一个依赖</p>
+<p>　　③、groupId,artifactId和version：依赖的基本坐标，对于任何一个依赖来说，基本坐标是最重要的，Maven根据坐标才能找到需要的依赖。</p>
+<p>　　④、type：依赖的类型，对应于项目坐标定义的packaging。大部分情况下，该元素不必声明，其默认值是jar。</p>
+<p>　　⑤、scope：依赖的范围，默认值是 compile。后面会进行详解。</p>
+<p>　　⑥、optional：标记依赖是否可选。</p>
+<p>　　⑦、exclusions：用来排除传递性依赖，后面会进行详细介绍。</p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="4、依赖的范围-scope"><a href="#4、依赖的范围-scope" class="headerlink" title="4、依赖的范围 scope "></a><span id="4">4、依赖的范围 scope </span></h3></blockquote>
+<p>　　<img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/scope.png?raw=true" alt="scope.png"><br>　　<br>　　一般情况下，我们对前面三个依赖用的比较多。下面的主程序表示maven 目录结构 src/main/java.测试程序目录结构为：src/test/java</p>
+<p>　　1、compile 范围依赖</p>
+<p>　　　　对主程序是否有效：有效</p>
+<p>　　　　对测试程序是否有效：有效</p>
+<p>　　　　是否参与打包：参与</p>
+<p>　　　　是否参与部署：参与</p>
+<p>　　　　典型例子：log4j</p>
+<p>　　　　</p>
+<p>　　2、test 范围依赖</p>
+<p>　　　　对主程序是否有效：无效</p>
+<p>　　　　对测试程序是否有效：有效</p>
+<p>　　　　是否参与打包：不参与</p>
+<p>　　　　是否参与部署：不参与</p>
+<p>　　　　典型例子：Junit</p>
+<p>　　</p>
+<p>　　3、provided 范围依赖</p>
+<p>　　　　对主程序是否有效：有效</p>
+<p>　　　　对测试程序是否有效：有效</p>
+<p>　　　　是否参与打包：不参与</p>
+<p>　　　　是否参与部署：不参与</p>
+<p>　　典型例子：servlet-api.jar，一般在发布到 服务器中，比如 tomcat，服务器会自带 servlet-api.jar 包，所以provided 范围依赖只在编译测试有效。</p>
+<p>　　　 </p>
+<p>　　4、runtime 范围依赖：在测试、运行的时候依赖，在编译的时候不依赖。例如：JDBC驱动，项目代码只需要jdk提供的jdbc接口，只有在执行测试和运行项目的时候才需要实现jdbc的功能。</p>
+<p> 　　</p>
+<p>　　接下来我们举几个例子在工程中实际去理解下：</p>
+<p>　　test 依赖和 compile 依赖的区别：</p>
+<p>　　①、首先我们在 pom.xml 文件中配置，Junit 的 test 依赖<br>　　　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/junit-scope.png?raw=true" alt="junit-scope.png"><br>　　　　<br>　　②、我们在主程序中去导入 Junit 的包，然后进行 mvn -compile 编译，很明显，test 范围的在主程序中无效，故编译会报错。<br>　　　　<br>　　我们在 src/main/java 包下新建 MavenTest.java,并导入 Junit 包</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/create-MavenTest-javafile.png?raw=true" alt="create-MavenTest-javafile.png">　　<br>　　　　<br>　　然后执行 mvn -compile 操作，如下图报错信息：</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/junit-test-class-error.png?raw=true" alt="junit-scope.png"><br>　<br>　　③、我们将 Junit 的依赖范围改为 compile，然后执行 mvn -compile</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/scope-is-compile.png?raw=true" alt="junit-scope.png"></p>
+<p>　　发现 mvn -compile 没有报错了。</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/mvn-compile-no-error.png?raw=true" alt="junit-scope.png"></p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="5、依赖的传递"><a href="#5、依赖的传递" class="headerlink" title="5、依赖的传递"></a><span id="5">5、依赖的传递</span></h3></blockquote>
+<p>　　比如我们创建三个Maven 工程，maven-first,maven-second以及maven-third,而third依赖于second，second又依赖于first，那么我们说 second 是 third 的第一直接依赖，first是second的第二直接依赖。而first是third的间接依赖。</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-first-second-third.png?raw=true" alt="maven-first-second-third.png"></p>
+<p>　　依赖之间的传递如下图：<strong>第一列表示第一直接依赖，第一行表示第二直接依赖</strong></p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/first-second-third.png?raw=true" alt="first-second-third.png"></p>
+<p>　　<strong>总结：</strong><br>　　1.当第二依赖的范围是compile的时候，传递性依赖的范围与第一直接依赖的范围一致。<br>　　2.当第二直接依赖的范围是test的时候，依赖不会得以传递。<br>　　3.当第二依赖的范围是provided的时候，只传递第一直接依赖范围也为provided的依赖，且传递性依赖的范围同样为 provided；<br>　　4.当第二直接依赖的范围是runtime的时候，传递性依赖的范围与第一直接依赖的范围一致，但compile例外，此时传递的依赖范围为runtime；<br>　　<br>　　我们这里举个例子来看：</p>
+<p>　　①、第二依赖范围是 test</p>
+<p>　　　　Maven_first 的pom.xml 文件如下：<br>　　　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-first-pom.png?raw=true" alt="maven-first-pom.png"></p>
+<p>　　然后Maven_second依赖Maven_fisrt,Maven_third依赖Maven-second,其pom.xml 文件如下：</p>
+<p>　　Maven_second的 pom.xml<br>　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-second-pom.png?raw=true" alt="maven-second-pom.png"></p>
+<p>　　Maven_third的 pom.xml<br>　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-third-pom.png?raw=true" alt="maven-third-pom.png"><br>　　　　<br>　　我们发现在 Maven_third和 Maven_second 都没有 Maven_first 引入的 Junit 包，正好符合上面总结的第二点：当第二直接依赖的范围是test的时候，依赖不会得以传递。<br>　　　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/none-Junit.png?raw=true" alt="maven-third-pom.png"></p>
+<p>　　②、第二依赖范围是 compile</p>
+<p>　　如果我们将 Maven_first 的Junit 改为 compile，那么将会符合上面总结的第一点：当第二依赖的范围是compile的时候，传递性依赖的范围与第一直接依赖的范围一致。<br>　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven_first-scope-is-compile.png?raw=true" alt="maven_first-scope-is-compile.png"></p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="6、依赖的排除"><a href="#6、依赖的排除" class="headerlink" title="6、依赖的排除"></a><span id="6">6、依赖的排除</span></h3></blockquote>
+<p>　　如果我们在当前工程中引入了一个依赖是 A，而 A 又依赖了 B，那么 Maven 会自动将 A 依赖的 B 引入当前工程，但是个别情况下 B 有可能是一个不稳定版，或对当前工程有不良影响。这时我们可以在引入 A 的时候将 B 排除。</p>
+<p>　　比如：我们在Maven_first 中添加 spring-core,maven 会自动将 commons-logging添加进来，那么由于 Maven_second 是依赖 Maven_first  的，那么 Maven_second  中将存在 spring-core(自带了commons-logging)，这时候我们不想要 commons-logging，那该怎么办呢？我们上面第二大点提到了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exclusions：用来排除传递性依赖</span><br></pre></td></tr></table></figure>
+<p>　　Maven_first 的 pom.xml 文件</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-first-add-spring-core.png?raw=true" alt="maven-first-add-spring-core.png"></p>
+<p>　　由于 Maven_second 依赖 Maven_first，故Maven_second 存在 spring-core 包</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-first-and-second-has-spring-core-jar.png?raw=true" alt="maven-first-and-second-has-spring-core-jar.png"></p>
+<p>　　如何排除呢？我们在 Maven_second 的 pom.xml 文件中添加如下代码：</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-second-pom-exclusions-jar.png?raw=true" alt="maven-second-pom-exclusions-jar.png"></p>
+<p>　　再次查看工程：Maven_second 的 commons-logging 已经移除了</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/commons-logging-jar-exclusions.png?raw=true" alt="commons-logging-jar-exclusions.png"></p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="7、依赖的冲突"><a href="#7、依赖的冲突" class="headerlink" title="7、依赖的冲突"></a><span id="7">7、依赖的冲突</span></h3></blockquote>
+<p>　　在maven中存在两种冲突方式：一种是跨pom文件的冲突，一种是同一个pom文件中的冲突。</p>
+<p>　　①、跨 pom 文件，路径最短者优先。比如我们在 Maven_first 中的 Junit 是4.9版本的，Maven_second 中的 Junit 是4.8版本的，那么Maven_third 中的 Junit 将会是那个版本呢？</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/junit-4.8-jar-same.png?raw=true" alt="junit-4.8-jar-same.png"></p>
+<p>　　由上图我们可以看出，由于 Maven_second 是 Maven_third 的直接依赖，明显相比于 Maven_first 路径要短，所以 Maven_third 的 Junit 版本与 Maven_second 保持一致。</p>
+<p>　　②、同一个pom.xml 文件，先申明者优先。</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/commons-logging-version-is-1.2.png?raw=true" alt="commons-logging-version-is-1.2.png"></p>
+<p>　　看 Maven_second 工程目录：</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/maven-second-commons-logg-ver-is-1.2.png?raw=true" alt="maven-second-commons-logg-ver-is-1.2.png"></p>
+<div align="right">[回到顶部](#jumpDirectory)</div>
+
+<blockquote>
+<h3 id="8、可选依赖"><a href="#8、可选依赖" class="headerlink" title="8、可选依赖"></a><span id="8">8、可选依赖</span></h3></blockquote>
+<p>　　Optional标签标示该依赖是否可选，默认是false。<br>　　可以理解为，如果为true，则表示该依赖不会传递下去，如果为false，则会传递下去。</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/optional-is-true.png?raw=true" alt="optional-is-true.png"></p>
+<p>　　我们是在 Maven_second 的 pom 文件中设定 Junit 不可传递，那么Maven_third 工程中将不会有来自 Maven_second 的 Junit 的传递。</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/Maven-Detailed/optional-set-true-none-junitJAR.png?raw=true" alt="optional-set-true-none-junitJAR.png"></p>
+<p><strong><code>那么Maven的生命周期是怎样的呢？</code></strong>请继续阅读<a href="https://locqi.gitee.io/locqi.com/2018/09/18/Maven-Detailed-[6]-Maven-lifeCycle/" target="_blank" rel="noopener">下一篇文章</a>吧！</p>
+
+            <div class="post-copyright">
+    <div class="content">
+        <p>最后更新： 2018年09月19日 15:41</p>
+        <!--<p>原始链接： <a class="post-url" href="/locqi.com/2018/09/17/Maven-Detailed-%5B5%5D-coordinate-concept-and-dependManage/" title="Maven详解（五）------ 坐标的概念以及依赖管理">https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/</a></p>-->
+        <footer>
+            <a href="https://locqi.github.io/locqi.com">
+                <img src="/locqi.com/images/logo.jpg" alt="Locqi">
+                Locqi
+            </a>
+        </footer>
+    </div>
+</div>
+
+      
+        
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;">赏</a>
+</div>
+
+<div id="reward" class="post-modal reward-lay">
+    <a class="close" href="javascript:;" id="reward-close">×</a>
+    <span class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        请我吃糖~
+        <i class="icon icon-quote-right"></i>
+    </span>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/locqi.com/images/wechat_code.jpg" alt="打赏二维码">
+        </div>
+        <div class="reward-select">
+            
+            <label class="reward-select-item checked" data-id="wechat" data-wechat="/locqi.com/images/wechat_code.jpg">
+                <img class="reward-select-item-wechat" src="/locqi.com/images/wechat.png" alt="微信">
+            </label>
+            
+            
+            <label class="reward-select-item" data-id="alipay" data-alipay="/locqi.com/images/alipay_code.jpg">
+                <img class="reward-select-item-alipay" src="/locqi.com/images/alipay.png" alt="支付宝">
+            </label>
+            
+        </div>
+    </div>
+</div>
+
+
+        
+    </div>
+    <footer class="article-footer">
+        
+        
+<div class="post-share">
+    <a href="javascript:;" id="share-sub" class="post-share-fab">
+        <i class="fa fa-share-alt"></i>
+    </a>
+    <div class="post-share-list" id="share-list">
+        <ul class="share-icons">
+          <li>
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/&title=《Maven详解（五）------ 坐标的概念以及依赖管理》 — Locqi&pic=https://locqi.github.io/locqi.comimages/logo.jpg" data-title="微博">
+              <i class="fa fa-weibo"></i>
+            </a>
+          </li>
+          <li>
+            <a class="weixin share-sns" id="wxFab" href="javascript:;" data-title="微信">
+              <i class="fa fa-weixin"></i>
+            </a>
+          </li>
+          <li>
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/&title=《Maven详解（五）------ 坐标的概念以及依赖管理》 — Locqi&source=没有最好只有更好" data-title="QQ">
+              <i class="fa fa-qq"></i>
+            </a>
+          </li>
+          <li>
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/" data-title="Facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+          </li>
+          <li>
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Maven详解（五）------ 坐标的概念以及依赖管理》 — Locqi&url=https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/&via=https://locqi.github.io/locqi.com" data-title="Twitter">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/" data-title="Google+">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        </ul>
+     </div>
+</div>
+<div class="post-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;" id="wxShare-close">×</a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/" alt="微信分享二维码">
+</div>
+
+<div class="mask"></div>
+
+        
+        <ul class="article-footer-menu">
+            
+            
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/locqi.com/tags/Maven技术/" class="color3">Maven技术</a>
+      
+  </li>
+
+        </ul>
+        
+    </footer>
+  </div>
+</article>
+
+
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#目录"><span class="post-toc-text">目录</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#正文"><span class="post-toc-text">正文</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1"><span class="post-toc-text">1、什么是坐标？</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#①、数学中的坐标"><span class="post-toc-text">①、数学中的坐标</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#②、Maven-中的坐标"><span class="post-toc-text">②、Maven 中的坐标</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#③、Maven-坐标和仓库，jar-包的关系"><span class="post-toc-text">③、Maven 坐标和仓库，jar 包的关系</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2、什么是依赖？"><span class="post-toc-text">2、什么是依赖？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3、依赖的详细配置"><span class="post-toc-text">3、依赖的详细配置</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4、依赖的范围-scope"><span class="post-toc-text">4、依赖的范围 scope </span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#5、依赖的传递"><span class="post-toc-text">5、依赖的传递</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#6、依赖的排除"><span class="post-toc-text">6、依赖的排除</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#7、依赖的冲突"><span class="post-toc-text">7、依赖的冲突</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#8、可选依赖"><span class="post-toc-text">8、可选依赖</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+
+<nav id="article-nav">
+  
+    <a href="/locqi.com/2018/09/18/Maven-Detailed-%5B6%5D-Maven-lifeCycle/" id="article-nav-newer" class="article-nav-link-wrap">
+
+      <span class="article-nav-title">
+        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
+        
+          Maven详解（六）------ 生命周期
+        
+      </span>
+    </a>
+  
+  
+    <a href="/locqi.com/2018/09/14/Maven-Detailed-%5B4%5D-common-maven-commands/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">Maven详解（四）------ 常用的Maven命令</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
+  
+</nav>
+
+
+
+    
+        <section id="comments">
+            <div id="disqus_thread">
+                <script type="text/javascript">
+                    var disqus_shortname = 'Locqi';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+            </div>
+        </section>
+    
+</section>
+        
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+      <p>
+      <span class="footer__copyright">
+        &copy; 2020 Locqi - 本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+       
+    </span>
+    </br>
+    <span class="footer__copyright">
+             - 基于 <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> 搭建，使用 <a href="https://blog.minhow.com/ " target="_blank" rel="noopener">miho</a> 主题，由<a href="https://gitee.com/locqi " target="_blank" rel="noopener">@Locqi</a> 修改, 原创出自<a href="https://github.com/WongMinHo/hexo-theme-miho" target="_blank">WongMinHo</a>
+         </span>
+       
+    
+   
+      </p>     
+      
+    </div>
+  </div>
+  
+</footer>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  var mihoConfig = {
+      root: "https://locqi.github.io/locqi.com",
+      animate: true,
+      isHome: false,
+      share: true,
+      reward: 1
+  }
+</script>
+<div class="sidebar">
+    <div id="sidebar-search" title="Search">
+        <i class="fa fa-search"></i>
+    </div>
+    <div id="sidebar-category" title="Categories">
+        <i class="fa fa-book"></i>
+    </div>
+    <div id="sidebar-tag" title="Tags">
+        <i class="fa fa-tags"></i>
+    </div>
+    <div id="sidebar-top">
+        <span class="sidebar-top-icon"><i class="fa fa-angle-up"></i></span>
+    </div>
+</div>
+<div class="sidebar-menu-box" id="sidebar-menu-box">
+    <div class="sidebar-menu-box-container">
+        <div id="sidebar-menu-box-categories">
+            <a class="category-link" href="/locqi.com/categories/Java%E6%8A%80%E6%9C%AF/">Java技术</a><a class="category-link" href="/locqi.com/categories/Maven%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/">Maven系列教程</a><a class="category-link" href="/locqi.com/categories/Web%E6%9C%8D%E5%8A%A1/">Web服务</a><a class="category-link" href="/locqi.com/categories/iOS%E6%8A%80%E6%9C%AF/">iOS技术</a><a class="category-link" href="/locqi.com/categories/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">搭建博客</a>
+        </div>
+        <div id="sidebar-menu-box-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+    <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
+</div>
+<div class="mobile-header-menu-nav" id="mobile-header-menu-nav">
+    <div class="mobile-header-menu-container">
+        <span class="title">Menus</span>
+        <ul class="mobile-header-menu-navbar">
+            
+            <li>
+                <a  href="/locqi.com/">
+                    <i class="fa fa-home"></i><span>Home</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/archives">
+                    <i class="fa fa-archive"></i><span>Archives</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/favourite/time.html">
+                    <i class="fa fa-favourite"></i><span>Time Machine</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/aboutme">
+                    <i class="fa fa-user"></i><span>About</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="mobile-header-tag-container">
+        <span class="title">Tags</span>
+        <div id="mobile-header-container-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+</div>
+<div class="search-wrap">
+    <span class="search-close">&times;</span>
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+            <i class="icon icon-lg icon-chevron-left"></i>
+        </a>
+        <input class="search-field" placeholder="Search..." id="keywords">
+        <a id="search-submit" href="javascript:;">
+            <i class="fa fa-search"></i>
+        </a>
+    <div class="search-container" id="search-container">
+        <ul class="search-result" id="search-result">
+        </ul>
+    </div>
+</div>
+
+<div id="search-tpl">
+    <li class="search-result-item">
+        <a href="{url}" class="search-item-li">
+            <span class="search-item-li-title" title="{title}">{title}</span>
+        </a>
+    </li>
+</div>
+
+<script src="/locqi.com/js/search.js"></script>
+
+
+<script src="/locqi.com/js/main.js"></script>
+
+
+
+  <script src="//cdn.bootcss.com/particles.js/2.0.0/particles.min.js"></script>
+  <div id="particles"></div>
+  
+<script src="/locqi.com/js/particles.js"></script>
+
+
+
+
+<script>
+  var disqus_shortname = 'Locqi';
+  
+  var disqus_url = 'https://locqi.github.io/locqi.com/2018/09/17/Maven-Detailed-[5]-coordinate-concept-and-dependManage/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+
+  <script src="//cdn.bootcss.com/scrollReveal.js/3.0.5/scrollreveal.js"></script>
+  
+<script src="/locqi.com/js/animate.js"></script>
+
+
+
+  
+<script src="/locqi.com/js/pop-img.js"></script>
+
+  <script>
+     $(".article-entry p img").popImg();
+  </script>
+
+  </div>
+</body>
+</html>

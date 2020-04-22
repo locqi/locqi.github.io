@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用Axis2实现WebService的发布和调用 | Locqi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="Locqi,Locqi's Blog" />
+  
+  <meta name="description" content="一、Axis2简介：　　Axis2是一套崭新的WebService引擎，该版本是对Axis1.x重新设计的产物。Axis2不仅支持SOAP1.1和SOAP1.2，还集成了非常流行的REST WebService，同时还支持Spring、JSON等技术。在本文中主要介绍了如何使用Axis2开发WebService，并在客户端使用Java调用这个WebService。 二、Axis2的下载和安装：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Axis2实现WebService的发布和调用">
+<meta property="og:url" content="https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/index.html">
+<meta property="og:site_name" content="Locqi">
+<meta property="og:description" content="一、Axis2简介：　　Axis2是一套崭新的WebService引擎，该版本是对Axis1.x重新设计的产物。Axis2不仅支持SOAP1.1和SOAP1.2，还集成了非常流行的REST WebService，同时还支持Spring、JSON等技术。在本文中主要介绍了如何使用Axis2开发WebService，并在客户端使用Java调用这个WebService。 二、Axis2的下载和安装：">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/axis2-show.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/simple-pojo-4-javaClass.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/show-reslut-4-sayHelloToPerson.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/services-xmlfile-path.png?raw=true">
+<meta property="og:image" content="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/myService.png?raw=true">
+<meta property="article:published_time" content="2018-09-25T01:50:30.000Z">
+<meta property="article:modified_time" content="2018-09-26T06:29:25.000Z">
+<meta property="article:author" content="Locqi">
+<meta property="article:tag" content="WebService技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/axis2-show.png?raw=true">
+  
+  
+    <link rel="icon" href="/favicon.jpg">
+  
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  
+<link rel="stylesheet" href="/locqi.com/css/style.css">
+
+  
+<script src="/locqi.com/js/pace.min.js"></script>
+
+  
+
+  
+  
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div id="container">
+      <header id="header">
+    <div id="banner"></div>
+    <div id="header-outer">
+        <div id="header-menu" class="header-menu-pos animated">
+            <div class="header-menu-container">
+                <a href="/locqi.com/" class="left">
+                    <span class="site-title">Locqi&#39;s Blog</span>
+                </a>
+                <nav id="header-menu-nav" class="right">
+                    
+                    <a  href="/locqi.com/">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/archives">
+                        <i class="fa fa-archive"></i>
+                        <span>Archives</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/favourite/time.html">
+                        <i class="fa fa-favourite"></i>
+                        <span>Time Machine</span>
+                    </a>
+                    
+                    <a  href="/locqi.com/aboutme">
+                        <i class="fa fa-user"></i>
+                        <span>About</span>
+                    </a>
+                    
+                </nav>
+                <a class="mobile-header-menu-button">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        <div id="header-row">
+            <div id="logo">
+                <a href="/locqi.com/">
+                    <img src="/locqi.com/images/logo.jpg" alt="logo">
+                </a>
+            </div>
+            <div class="header-info">
+                <div id="header-title">
+                    
+                    <h2>
+                        Locqi&#39;s Blog
+                    </h2>
+                    
+                </div>
+                <div id="header-description">
+                    
+                    <h3>
+                        世间所有的相遇，都是久别重逢。
+                    </h3>
+                    
+                </div>
+            </div>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a title="Gitee" target="_blank" href="//gitee.com/locqi">
+                            <i class="fa fa-home fa-2x"></i></a>
+                    
+                        <a title="Github" target="_blank" href="//github.com/Locqi">
+                            <i class="fa fa-github fa-2x"></i></a>
+                    
+                        <a title="Weibo" target="_blank" href="//weibo.com/huhu359819176">
+                            <i class="fa fa-weibo fa-2x"></i></a>
+                    
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+      <div class="outer">
+        <section id="main" class="body-wrap"><article id="post-use-Axis2-build-webService" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="post-title" itemprop="name">
+      使用Axis2实现WebService的发布和调用
+    </h1>
+    <div class="post-title-bar">
+      <ul>
+          
+              <li>
+                  <i class="fa fa-book"></i>
+                  
+                      <a href="/locqi.com/categories/Web服务/">Web服务</a>
+                  
+              </li>
+          
+        <li>
+          <i class="fa fa-calendar"></i>  2018-09-25
+        </li>
+        <li>
+          <i class="fa fa-eye"></i>
+          <span id="busuanzi_value_page_pv"></span>
+        </li>
+      </ul>
+    </div>
+  
+
+          
+      </header>
+    
+    <div class="article-entry post-content" itemprop="articleBody">
+      
+            
+            <h3 id="一、Axis2简介："><a href="#一、Axis2简介：" class="headerlink" title="一、Axis2简介："></a>一、Axis2简介：</h3><p>　　Axis2是一套崭新的WebService引擎，该版本是对Axis1.x重新设计的产物。Axis2不仅支持SOAP1.1和SOAP1.2，还集成了非常流行的REST WebService，同时还支持Spring、JSON等技术。在本文中主要介绍了如何使用Axis2开发WebService，并在客户端使用Java调用这个WebService。</p>
+<h3 id="二、Axis2的下载和安装："><a href="#二、Axis2的下载和安装：" class="headerlink" title="二、Axis2的下载和安装："></a>二、Axis2的下载和安装：</h3><p>　　Axis下载地址： <a href="http://ws.apache.org/axis2/" target="_blank" rel="noopener">http://ws.apache.org/axis2/</a></p>
+<p>　　在本文使用了目前Axis2的最新版本1.7.8。读者可以下载以下两个zip包：<br>　　　　axis2-1.7.8-bin.zip<br>　　　　axis2-1.7.8-war.zip<br>　　其中 axis2-1.7.8-bin.zip 文件中包含了Axis2中所有的jar文件,axis2-1.7.8-war.zip 文件用于将WebService发布到Web容器中。</p>
+<p>　　将 axis2-1.7.8-war.zip 文件解压到相应的目录，将目录中的axis2.war文件放到Tomcat服务器的webapps目录中（本文使用的Tomcat的版本是8.x），并启动Tomcat。 </p>
+<p>　　在浏览器地址栏中输入如下的URL：<a href="http://localhost:8080/axis2/" target="_blank" rel="noopener">http://localhost:8080/axis2/</a><br>　　如果在浏览器中显示出如下所示的页面，则表示Axis2安装成功。</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/axis2-show.png?raw=true" alt="axis2-show.png"></p>
+<h3 id="三、编写和发布WebService"><a href="#三、编写和发布WebService" class="headerlink" title="三、编写和发布WebService"></a>三、编写和发布WebService</h3><h4 id="1、简单的pojo方式（无需配置）："><a href="#1、简单的pojo方式（无需配置）：" class="headerlink" title="1、简单的pojo方式（无需配置）："></a>1、简单的pojo方式（无需配置）：</h4><p>　　在Axis2中不需要进行任何的配置，就可以直接将一个简单的POJO发布成WebService。其中POJO中所有的public方法将被发布成WebService方法。</p>
+<p>　　示例代码如下：
+　　</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class HelloService &#123;   </span><br><span class="line">    public String <span class="function"><span class="title">sayHello</span></span>()&#123;  </span><br><span class="line">        <span class="built_in">return</span> <span class="string">"hello"</span>;  </span><br><span class="line">    &#125;     </span><br><span class="line">    public String sayHelloToPerson(String name)&#123;          </span><br><span class="line">        <span class="keyword">if</span>(name==null)&#123;  </span><br><span class="line">            name = <span class="string">"nobody"</span>;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="built_in">return</span> <span class="string">"hello,"</span>+name;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　编译HelloService类后，将HelloService.class文件放到<code>&lt;Tomcat安装目录&gt;\webapps\axis2\WEB-INF\pojo</code>目录中（如果没有pojo目录，则建立该目录）。现在我们已经成功将HelloService类发布成了WebService。在浏览器地址栏中输入如下的URL：<br>　　<a href="http://localhost:8080/axis2/services/listServices" target="_blank" rel="noopener">http://localhost:8080/axis2/services/listServices</a></p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/simple-pojo-4-javaClass.png?raw=true" alt="simple-pojo-4-javaClass.png"></p>
+<p>　　在浏览器地址栏中输入以下的两个URL来分别测试sayHelloToPerson和sayHello方法：<br>　　　　<a href="http://localhost:8080/axis2/services/HelloService/sayHello" target="_blank" rel="noopener">http://localhost:8080/axis2/services/HelloService/sayHello</a><br>　　　　<a href="http://localhost:8080/axis2/services/HelloService/sayHelloToPerson?name=bill" target="_blank" rel="noopener">http://localhost:8080/axis2/services/HelloService/sayHelloToPerson?name=bill</a></p>
+<p>　　页面显示如下结果：<br>　　<br><img src="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/show-reslut-4-sayHelloToPerson.png?raw=true" alt="show-reslut-4-sayHelloToPerson.png"></p>
+<p><code>注意：</code>在编写、发布和测试WebService时应注意以下几点：<br>　　<br>　　1. POJO类不能使用package关键字声明包。<br>　　2. Axis2在默认情况下可以热发布WebService，也就是说，将WebService的.class文件复制到pojo目录中时，Tomcat不需要重新启动就可以自动发布WebService。<br>　　<br>　　如果想取消Axis2的热发布功能，可以打开<code>&lt;Tomcat安装目录&gt;\webapps\axis2\WEB-INF\conf\axis2.xml</code>，找到如下的配置代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;parameter name&#x3D;&quot;hotdeployment&quot;&gt;true&lt;&#x2F;parameter&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　将true改为false即可。要注意的是，Axis2在默认情况下虽然是热发布，但并不是热更新.也就是说，一旦成功发布了WebService，再想更新该WebService，就必须重启Tomcat。这对于开发人员调试WebService非常不方便，因此，在开发WebService时，可以将Axis2设为热更新。<br>　　在axis2.xml文件中找到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;parameter name&#x3D;&quot;hotupdate&quot;&gt;false&lt;&#x2F;parameter&gt;</span><br></pre></td></tr></table></figure>
+
+<p>将false改为true即可。</p>
+<p>　　3. 在浏览器中测试WebService时，如果WebService方法有参数，需要使用URL的请求参数来指定该WebService方法参数的值，请求参数名与方法参数名要一致，例如，要测试sayHelloToPerson方法，请求参数名应为name，如上面的URL所示。</p>
+<p>　　4. 发布WebService的pojo目录只是默认的，如果读者想在其他的目录发布WebService，可以打开axis2.xml文件，并在<strong><code>&lt;axisconfig&gt;</code></strong>元素中添加如下<strong><code>（directory=&quot;locqi&quot;）</code></strong>的子元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--POJO deployer , this will alow users to drop .class file and make that into a service--&gt;</span><br><span class="line">    &lt;deployer extension&#x3D;&quot;.class&quot; directory&#x3D;&quot;pojo&quot; class&#x3D;&quot;org.apache.axis2.deployment.POJODeployer&quot;&#x2F;&gt;</span><br><span class="line">    &lt;deployer extension&#x3D;&quot;.class&quot; directory&#x3D;&quot;locqi&quot; class&#x3D;&quot;org.apache.axis2.deployment.POJODeployer&quot;&#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　上面的配置允许在<code>&lt;Tomcat安装目录&gt;\webapps\axis2\WEB-INF\locqi</code>目录中发布WebService。<br>例如，将本例中的HelloService.class复制到locqi目录中也可以成功发布。</p>
+<h4 id="2、打jar包的方式："><a href="#2、打jar包的方式：" class="headerlink" title="2、打jar包的方式："></a>2、打jar包的方式：</h4><p>　　用Axis2实现Web Service，虽然可以将POJO类放在<code>axis2\WEB-INF\pojo</code>目录中直接发布成Web Service，  这样做不需要进行任何配置，但这些POJO类不能在任何包中。这似乎有些不方便.  为此，Axis2也允许将带包的POJO类发布成Web Service。先实现一个POJO类，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">package com.locqi.webservice;</span><br><span class="line"></span><br><span class="line">public class HelloServiceNew &#123;</span><br><span class="line"></span><br><span class="line">	public String sayHello() &#123;</span><br><span class="line">		return &quot;hello&quot;;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String sayHelloToPerson(String name) &#123;</span><br><span class="line">		if (name &#x3D;&#x3D; null) &#123;</span><br><span class="line">			name &#x3D; &quot;nobody&quot;;</span><br><span class="line">		&#125;</span><br><span class="line">		return &quot;hello,&quot; + name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void updateData(String data) &#123;</span><br><span class="line">		System.out.println(data + &quot;已更新。&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　要想将HelloServiceNew类发布成Web Service，需要一个services.xml文件，在WEB-INF下创建services文件夹然后创建<strong><code>--&gt;conf--&gt;META-INF--&gt;services.xml</code></strong>，services.xml这个文件必须要放在META-INF目录中，该文件的内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!-- webService发布名称,命名空间 --&gt;</span><br><span class="line">&lt;service name&#x3D;&quot;HelloServiceNew&quot; targetNamespace&#x3D;&quot;http:&#x2F;&#x2F;ws.apache.org&#x2F;ax2&quot;&gt;</span><br><span class="line">	&lt;!-- 更改schemaNamespace，也可使用默认值，客户端调用时会使用 --&gt;</span><br><span class="line">	&lt;schema schemaNamespace&#x3D;&quot;http:&#x2F;&#x2F;sdjxd.com.cn&quot; &#x2F;&gt;</span><br><span class="line">	&lt;!-- webService描述 --&gt;</span><br><span class="line">	&lt;description&gt;Web Service实例一&lt;&#x2F;description&gt;</span><br><span class="line">	&lt;!-- webService的实现类 --&gt;</span><br><span class="line">	&lt;parameter name&#x3D;&quot;ServiceClass&quot;&gt;com.locqi.webservice.HelloServiceNew</span><br><span class="line">	&lt;&#x2F;parameter&gt;</span><br><span class="line">	&lt;messageReceivers&gt;</span><br><span class="line">		&lt;!-- 配置消息接收器，Axis2会自动选择 --&gt;</span><br><span class="line">		&lt;messageReceiver mep&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2004&#x2F;08&#x2F;wsdl&#x2F;in-out&quot;</span><br><span class="line">			class&#x3D;&quot;org.apache.axis2.rpc.receivers.RPCMessageReceiver&quot; &#x2F;&gt;</span><br><span class="line">		&lt;messageReceiver mep&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2004&#x2F;08&#x2F;wsdl&#x2F;in-only&quot;</span><br><span class="line">			class&#x3D;&quot;org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver&quot; &#x2F;&gt;</span><br><span class="line">	&lt;&#x2F;messageReceivers&gt;</span><br><span class="line">&lt;&#x2F;service&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　其中<strong><code>&lt;service&gt;</code></strong>元素用于发布Web Service，一个<strong><code>&lt;service&gt;</code></strong>元素只能发布一个WebService类，<br>name属性表示WebService名，如下面的URL可以获得这个WebService的WSDL内容：<br>　　<a href="http://localhost:8080/axis2/services/HelloServiceNew?wsdl" target="_blank" rel="noopener">http://localhost:8080/axis2/services/HelloServiceNew?wsdl</a><br>　　其中name属性名就是上面URL中”?”和”/“之间的部分。<strong><code>&lt;description&gt;</code></strong>元素表示当前Web Service的描述，<strong><code>&lt;parameter&gt;</code></strong>元素用于设置WebService的参数，在这里用于设置WebService对应的类名。在这里最值得注意的是<strong><code>&lt;messageReceivers&gt;</code></strong>元素，该元素用于设置处理WebService方法的处理器。<br>　　例如，sayHello方法有一个返回值，因此，需要使用可处理输入输出的RPCMessageReceiver类，而updateData方法没有返回值，因此，需要使用只能处理输入的RPCInOnlyMessageReceiver类。使用这种方式发布WebService，必须打包成.aar文件，.aar文件实际上就是改变了扩展名的.jar文件。<br>　　现在建立了两个文件：HelloServiceNew.java和services.xml。将HelloServiceNew.java编译，生成HelloServiceNew.class。services.xml和HelloServiceNew.class文件的位置如下：<br>　　<strong>D:\ws\com\locqi\webservice\HelloServiceNew.class<br>　　D:\ws\META-INF\services.xml</strong><br>　　在windows控制台中进入ws目录，并输入如下的命令生成.aar文件.</p>
+<p>　　<strong><code>jar cvf ws.aar .</code></strong>(<code>注意</code>：最后面是空格+小数点)</p>
+<p>　　实际上，.jar文件也可以发布webservice，但axis2官方文档中建议使用.aar文件发布webservice.最后将ws.aar文件复制到<strong><code>&lt;Tomcat安装目录&gt;\webapps\axis2\WEB-INF\services</code></strong>目录中，启动Tomcat后，就可以调用这个WebService了。<br>　　另外services.xml文件中也可以直接指定WebService类的方法，如可以用下面的配置代码来发布WebService</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!-- webService发布名称,命名空间 --&gt;</span><br><span class="line">&lt;service name&#x3D;&quot;HelloServiceNew&quot; targetNamespace&#x3D;&quot;http:&#x2F;&#x2F;ws.apache.org&#x2F;ax2&quot;&gt;</span><br><span class="line">	&lt;!-- 更改schemaNamespace，也可使用默认值，客户端调用时会使用 --&gt;</span><br><span class="line">	&lt;schema schemaNamespace&#x3D;&quot;http:&#x2F;&#x2F;sdjxd.com.cn&quot; &#x2F;&gt;</span><br><span class="line">	&lt;!-- webService描述 --&gt;</span><br><span class="line">	&lt;description&gt;Web Service实例一&lt;&#x2F;description&gt;</span><br><span class="line">	&lt;!-- webService的实现类 --&gt;</span><br><span class="line">	&lt;parameter name&#x3D;&quot;ServiceClass&quot;&gt;com.locqi.webservice.HelloServiceNew</span><br><span class="line">	&lt;&#x2F;parameter&gt;</span><br><span class="line"></span><br><span class="line">	&lt;operation name&#x3D;&quot;sayHello&quot;&gt;</span><br><span class="line">		&lt;messageReceiver class&#x3D;&quot;org.apache.axis2.rpc.receivers.RPCMessageReceiver&quot; &#x2F;&gt;</span><br><span class="line">	&lt;&#x2F;operation&gt;</span><br><span class="line">	&lt;operation name&#x3D;&quot;updateData&quot;&gt;</span><br><span class="line">		&lt;messageReceiver</span><br><span class="line">			class&#x3D;&quot;org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver&quot; &#x2F;&gt;</span><br><span class="line">	&lt;&#x2F;operation&gt;</span><br><span class="line">&lt;&#x2F;service&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　上面的配置代码前面的部分和以前的 services.xml文件的内容相同，但后面使用了 <strong><code>&lt;operation&gt;</code></strong>元素来指定每一个WebService方法，并单独指定了处理每一个方法的处理器。<br>　　如果想发布多个WebService，可以使用<strong><code>&lt;serviceGroup&gt;</code></strong>元素 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;serviceGroup&gt;  </span><br><span class="line">&lt;service name&#x3D;&quot;myService1&quot;&gt;  </span><br><span class="line">    ...  </span><br><span class="line">&lt;&#x2F;service&gt;  </span><br><span class="line">&lt;service name&#x3D;&quot;myService2&quot;&gt;  </span><br><span class="line">    ...  </span><br><span class="line">&lt;&#x2F;service&gt;  </span><br><span class="line">&lt;&#x2F;serviceGroup&gt;</span><br></pre></td></tr></table></figure>
+
+<p>中间省略的代码同上面services.xml文件的配置。</p>
+<h4 id="3、不打jar包的方式：（重点）"><a href="#3、不打jar包的方式：（重点）" class="headerlink" title="3、不打jar包的方式：（重点）"></a>3、不打jar包的方式：（重点）</h4><p>　　有一个最简单的方法就是把axis2.war中的内容作为Web Project的基础, 来进行开发.<br>　　不过为了更清楚的了解如何在一个已有的Web Project中嵌入axis2, 那就手动来配置。大致分如下几个步骤：</p>
+<p>　　一、新建Web Project，名为“WebServiceDemo”<br>　　二、下载axis2-1.6.1-war.zip包，解压缩<br>　　　　将axis2/WEB-INF/lib 里的jar包拷贝到 WebServiceDemo/WebRoot/WEB-INF/lib/<br>　　　　将axis2.war/axis2-web拷贝至WebServiceDemo/ WebRoot/axis2-web/<br>　　三、配置axis2 servlet<br>　　　　打开WebServiceDemo/WebRoot/WEB-INF/web.xml，增加如下配置：
+　　　　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;web-app xmlns:xsi&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2001&#x2F;XMLSchema-instance&quot;</span><br><span class="line">	xmlns&#x3D;&quot;http:&#x2F;&#x2F;xmlns.jcp.org&#x2F;xml&#x2F;ns&#x2F;javaee&quot;</span><br><span class="line">	xsi:schemaLocation&#x3D;&quot;http:&#x2F;&#x2F;xmlns.jcp.org&#x2F;xml&#x2F;ns&#x2F;javaee http:&#x2F;&#x2F;xmlns.jcp.org&#x2F;xml&#x2F;ns&#x2F;javaee&#x2F;web-app_3_1.xsd&quot;</span><br><span class="line">	id&#x3D;&quot;WebApp_ID&quot; version&#x3D;&quot;3.1&quot;&gt;</span><br><span class="line">	&lt;display-name&gt;WebServiceDemo&lt;&#x2F;display-name&gt;</span><br><span class="line">	&lt;servlet&gt;</span><br><span class="line">        &lt;display-name&gt;Apache-Axis Servlet&lt;&#x2F;display-name&gt;</span><br><span class="line">        &lt;servlet-name&gt;AxisServlet&lt;&#x2F;servlet-name&gt;</span><br><span class="line">        &lt;servlet-class&gt;org.apache.axis2.transport.http.AxisServlet&lt;&#x2F;servlet-class&gt;</span><br><span class="line">        &lt;load-on-startup&gt;1&lt;&#x2F;load-on-startup&gt;</span><br><span class="line">    &lt;&#x2F;servlet&gt;</span><br><span class="line">    &lt;servlet&gt;</span><br><span class="line">        &lt;display-name&gt;Apache-Axis AxisAdmin Servlet (Web Admin)&lt;&#x2F;display-name&gt;</span><br><span class="line">        &lt;servlet-name&gt;AxisAdminServlet&lt;&#x2F;servlet-name&gt;</span><br><span class="line">        &lt;servlet-class&gt;org.apache.axis2.webapp.AxisAdminServlet&lt;&#x2F;servlet-class&gt;</span><br><span class="line">    &lt;&#x2F;servlet&gt; </span><br><span class="line">    &lt;servlet-mapping&gt;</span><br><span class="line">        &lt;servlet-name&gt;AxisServlet&lt;&#x2F;servlet-name&gt;</span><br><span class="line">        &lt;url-pattern&gt;&#x2F;servlet&#x2F;AxisServlet&lt;&#x2F;url-pattern&gt;</span><br><span class="line">    &lt;&#x2F;servlet-mapping&gt;</span><br><span class="line">    &lt;servlet-mapping&gt;</span><br><span class="line">        &lt;servlet-name&gt;AxisServlet&lt;&#x2F;servlet-name&gt;</span><br><span class="line">        &lt;url-pattern&gt;*.jws&lt;&#x2F;url-pattern&gt;</span><br><span class="line">    &lt;&#x2F;servlet-mapping&gt;</span><br><span class="line">    &lt;servlet-mapping&gt;</span><br><span class="line">        &lt;servlet-name&gt;AxisServlet&lt;&#x2F;servlet-name&gt;</span><br><span class="line">        &lt;url-pattern&gt;&#x2F;services&#x2F;*&lt;&#x2F;url-pattern&gt;</span><br><span class="line">    &lt;&#x2F;servlet-mapping&gt;</span><br><span class="line">    &lt;servlet-mapping&gt;</span><br><span class="line">        &lt;servlet-name&gt;AxisAdminServlet&lt;&#x2F;servlet-name&gt;</span><br><span class="line">        &lt;url-pattern&gt;&#x2F;axis2-admin&#x2F;*&lt;&#x2F;url-pattern&gt;</span><br><span class="line">    &lt;&#x2F;servlet-mapping&gt;</span><br><span class="line">    &lt;mime-mapping&gt;</span><br><span class="line">        &lt;extension&gt;inc&lt;&#x2F;extension&gt;</span><br><span class="line">        &lt;mime-type&gt;text&#x2F;plain&lt;&#x2F;mime-type&gt;</span><br><span class="line">    &lt;&#x2F;mime-mapping&gt;</span><br><span class="line">   &lt;welcome-file-list&gt;</span><br><span class="line">      &lt;welcome-file&gt;&#x2F;axis2-web&#x2F;index.jsp&lt;&#x2F;welcome-file&gt;</span><br><span class="line">    &lt;&#x2F;welcome-file-list&gt;</span><br><span class="line">    &lt;error-page&gt;</span><br><span class="line">      &lt;error-code&gt;404&lt;&#x2F;error-code&gt;</span><br><span class="line">      &lt;location&gt;&#x2F;axis2-web&#x2F;Error&#x2F;error404.jsp&lt;&#x2F;location&gt;</span><br><span class="line">    &lt;&#x2F;error-page&gt;</span><br><span class="line">    &lt;error-page&gt;</span><br><span class="line">        &lt;error-code&gt;500&lt;&#x2F;error-code&gt;</span><br><span class="line">        &lt;location&gt;&#x2F;axis2-web&#x2F;Error&#x2F;error500.jsp&lt;&#x2F;location&gt;</span><br><span class="line">    &lt;&#x2F;error-page&gt;</span><br><span class="line">&lt;&#x2F;web-app&gt;</span><br></pre></td></tr></table></figure>
+<p>　　四、写一个简单的web服务类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.locqi;</span><br><span class="line"></span><br><span class="line">public class MyService &#123;</span><br><span class="line">	public String sayHello(String name) &#123;</span><br><span class="line">		return name + &quot; says:Hello!&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　五、配置Web Service.</p>
+<p>　　由于axis2已嵌入到WebServiceDemo项目中，所以web service就不用打包成aar，而是直接在/WEB-INF目录下创建相应的文件夹和services.xml，目录结构如下图：</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/services-xmlfile-path.png?raw=true" alt="services-xmlfile-path.png"></p>
+<p>　　六、services.xml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;serviceGroup&gt;</span><br><span class="line">	&lt;service name&#x3D;&quot;myService&quot;&gt;</span><br><span class="line">		&lt;description&gt;Web Service例子&lt;&#x2F;description&gt;</span><br><span class="line">		&lt;parameter name&#x3D;&quot;ServiceClass&quot;&gt;com.locqi.MyService&lt;&#x2F;parameter&gt;</span><br><span class="line">		&lt;operation name&#x3D;&quot;sayHello&quot;&gt;  &lt;!-- 类里面的方法名 --&gt;</span><br><span class="line">			&lt;messageReceiver mep&#x3D;&quot;http:&#x2F;&#x2F;www.w3.org&#x2F;2004&#x2F;08&#x2F;wsdl&#x2F;in-out&quot;</span><br><span class="line">				class&#x3D;&quot;org.apache.axis2.rpc.receivers.RPCMessageReceiver&quot; &#x2F;&gt;</span><br><span class="line">		&lt;&#x2F;operation&gt;</span><br><span class="line">	&lt;&#x2F;service&gt;</span><br><span class="line">&lt;&#x2F;serviceGroup&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　七、在浏览器中访问<a href="http://localhost:8080/WebServiceDemo/services/listServices" target="_blank" rel="noopener">http://localhost:8080/WebServiceDemo/services/listServices</a><br>可以看到myService服务，说明服务已部署成功。<br>　　输入<a href="http://localhost:8080/WebServiceDemo/services/myService?wsdl" target="_blank" rel="noopener">http://localhost:8080/WebServiceDemo/services/myService?wsdl</a><br>可以查看到该Web服务的描述文件</p>
+<p><img src="https://github.com/locqi/locqi.com/blob/master/images/use-Axis2-build-webService/myService.png?raw=true" alt="myService.png"></p>
+<h3 id="四、用Java实现调用WebService的客户端程序"><a href="#四、用Java实现调用WebService的客户端程序" class="headerlink" title="四、用Java实现调用WebService的客户端程序"></a>四、用Java实现调用WebService的客户端程序</h3><p>　　导入用到的jar包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">axiom-api-1.2.20.jar</span><br><span class="line">axiom-impl-1.2.20.jar</span><br><span class="line">axis2-adb-1.7.8.jar</span><br><span class="line">axis2-kernel-1.7.8.jar</span><br><span class="line">axis2-transport-http-1.7.8.jar</span><br><span class="line">axis2-transport-local-1.7.8.jar</span><br><span class="line">commons-codec-1.2.jar</span><br><span class="line">commons-httpclient-3.1.jar</span><br><span class="line">commons-logging-1.1.1.jar</span><br><span class="line">httpcore-4.4.6.jar</span><br><span class="line">neethi-3.0.3.jar</span><br><span class="line">wsdl4j-1.6.2.jar</span><br><span class="line">XmlSchema-1.4.7.jar</span><br></pre></td></tr></table></figure>
+<p>　　Java调用代码（RPC方式）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">package com.locqi.test;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">import javax.xml.namespace.QName;</span><br><span class="line"></span><br><span class="line">import org.apache.axis2.AxisFault;</span><br><span class="line">import org.apache.axis2.addressing.EndpointReference;</span><br><span class="line">import org.apache.axis2.client.Options;</span><br><span class="line">import org.apache.axis2.rpc.client.RPCServiceClient;</span><br><span class="line"></span><br><span class="line">public class RPCClient &#123;</span><br><span class="line"></span><br><span class="line">	public static String address &#x3D; &quot;http:&#x2F;&#x2F;localhost:8080&#x2F;WebServiceDemo&#x2F;services&#x2F;hello&quot;;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) throws IOException &#123;</span><br><span class="line">		Object[] result &#x3D; invoke(&quot;sayHelloToPerson&quot;, new Object[] &#123;&#125;, new Class[] &#123; String.class &#125;);</span><br><span class="line">		System.out.println(result[0]);</span><br><span class="line">	    result &#x3D; invoke(&quot;sayHelloToPerson&quot;, new Object[] &#123;&quot;jack&quot;&#125;, new Class[] &#123; String.class &#125;);</span><br><span class="line">		System.out.println(result[0]);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@SuppressWarnings(&quot;rawtypes&quot;)</span><br><span class="line">	public static Object[] invoke(String method, Object[] params, Class[] classes) throws AxisFault &#123;</span><br><span class="line">		&#x2F;&#x2F; 使用RPC方式调用WebService</span><br><span class="line">		RPCServiceClient client &#x3D; new RPCServiceClient();</span><br><span class="line">		Options option &#x3D; client.getOptions();</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; 指定调用的URL</span><br><span class="line">		EndpointReference reference &#x3D; new EndpointReference(address);</span><br><span class="line">		option.setTo(reference);</span><br><span class="line"></span><br><span class="line">		&#x2F;*</span><br><span class="line">		 * 设置要调用的方法 http:&#x2F;&#x2F;ws.apache.org&#x2F;axis2 为默认的（无package的情况）命名空间， 如果有包名，则为</span><br><span class="line">		 * http:&#x2F;&#x2F;axis2.webservice.elgin.com ,包名倒过来即可 method为方法名称</span><br><span class="line">		 * </span><br><span class="line">		 *&#x2F;</span><br><span class="line">		QName qname &#x3D; new QName(&quot;http:&#x2F;&#x2F;webservice.locqi.com&quot;, method);</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; 调用远程方法,并指定方法参数以及返回值类型</span><br><span class="line">		Object[] result &#x3D; client.invokeBlocking(qname, params, classes);</span><br><span class="line"></span><br><span class="line">		return result;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　输出结果为：<br>   　　hello,nobody<br>   　　hello,jack</p>
+<p>　　<strong>在编写客户端代码时应注意如下几点：</strong></p>
+<p>　　1. 客户端代码需要引用很多Axis2的jar包，如果读者不太清楚要引用哪个jar包，可以在Eclipse的工程中引用Axis2发行包的lib目录中的所有jar包。</p>
+<p>　　2. 在本例中使用了RPCServiceClient类的invokeBlocking方法调用了WebService中的方法。invokeBlocking方法有三个参数，其中，<br>　　第一个参数的类型是QName对象，表示要调用的方法名；<br>　　第二个参数表示要调用的WebService方法的参数值，参数类型为Object[]；<br>　　第三个参数表示WebService方法的返回值类型的Class对象，参数类型为Class[]。<br>　　当方法没有参数时，invokeBlocking方法的第二个参数值不能是null，而要使用new Object[]{}。<br>　　3. 如果被调用的WebService方法没有返回值，应使用RPCServiceClient类的invokeRobust方法，该方法只有两个参数，它们的含义与invokeBlocking方法的前两个参数的含义相同。</p>
+<p>　　4. 在创建QName对象时，QName类的构造方法的第一个参数表示WSDL文件的命名空间名，也就是<strong><code>&lt;wsdl:definitions&gt;</code></strong>元素的targetNamespace属性值。</p>
+<h3 id="五、用wsdl2java简化客户端的编写"><a href="#五、用wsdl2java简化客户端的编写" class="headerlink" title="五、用wsdl2java简化客户端的编写"></a>五、用wsdl2java简化客户端的编写</h3><p>　　Axis2提供了一个wsdl2java.bat命令可以根据WSDL文件自动产生调用WebService的代码。wsdl2java.bat命令可以在<strong><code>&lt;Axis2安装目录&gt;/bin</code></strong>目录中找到。在使用wsdl2java.bat命令之前需要设置AXIS2_HOME环境变量，该变量值是<strong><code>&lt;Axis2安装目录&gt;</code></strong>。在Windows控制台输出如下的命令行来生成调用WebService的代码：
+　　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%AXIS2_HOME%\bin\wsdl2java -uri http:&#x2F;&#x2F;localhost:8080&#x2F;axis2&#x2F;services&#x2F;HelloService?wsdl -p client -s -o stub</span><br></pre></td></tr></table></figure>
+
+<p>　　其中-url参数指定了wsdl文件的路径，可以是本地路径，也可以是网络路径。-p参数指定了生成的Java类的包名，-o参数指定了生成的一系列文件保存的根目录。在执行完上面的命令后，就会发现在当前目录下多了个stub目录，在stub/src/client目录可以找到一个HelloServiceStub.java文件，该文件复杂调用WebService，可以在程序中直接使用这个类，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package client;</span><br><span class="line"></span><br><span class="line">public class StupTest &#123;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) throws Exception &#123;</span><br><span class="line">		HelloStub stub &#x3D; new HelloStub();</span><br><span class="line">		HelloStub.SayHelloToPerson gg &#x3D; new HelloStub.SayHelloToPerson();</span><br><span class="line">		gg.setName(&quot;美女1&quot;);</span><br><span class="line">		System.out.println(stub.sayHelloToPerson(gg).get_return());</span><br><span class="line">		</span><br><span class="line">		MyServiceStub myServiceStub &#x3D; new MyServiceStub();</span><br><span class="line">		MyServiceStub.SayHello say &#x3D; new MyServiceStub.SayHello();</span><br><span class="line">		say.setName(&quot;美女2&quot;);</span><br><span class="line">		</span><br><span class="line">		System.out.println(myServiceStub.sayHello(say).get_return());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果如下：<br>　　hello,美女1<br>　　美女2 says:Hello!</p>
+<p>　　上面的代码大大简化了调用WebService的步骤，并使代码更加简洁。但要注意的是，wsdl2java.bat命令生成的Stub类将WebService方法的参数都封装在了相应的类中，类名为方法名，例如，sayHelloToPerson方法的参数都封装在了SayHelloToPerson类中，要想调用sayHelloToPerson方法，必须先创建SayHelloToPerson类的对象实例。</p>
+
+            <div class="post-copyright">
+    <div class="content">
+        <p>最后更新： 2018年09月26日 14:29</p>
+        <!--<p>原始链接： <a class="post-url" href="/locqi.com/2018/09/25/use-Axis2-build-webService/" title="使用Axis2实现WebService的发布和调用">https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/</a></p>-->
+        <footer>
+            <a href="https://locqi.github.io/locqi.com">
+                <img src="/locqi.com/images/logo.jpg" alt="Locqi">
+                Locqi
+            </a>
+        </footer>
+    </div>
+</div>
+
+      
+        
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;">赏</a>
+</div>
+
+<div id="reward" class="post-modal reward-lay">
+    <a class="close" href="javascript:;" id="reward-close">×</a>
+    <span class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        请我吃糖~
+        <i class="icon icon-quote-right"></i>
+    </span>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/locqi.com/images/wechat_code.jpg" alt="打赏二维码">
+        </div>
+        <div class="reward-select">
+            
+            <label class="reward-select-item checked" data-id="wechat" data-wechat="/locqi.com/images/wechat_code.jpg">
+                <img class="reward-select-item-wechat" src="/locqi.com/images/wechat.png" alt="微信">
+            </label>
+            
+            
+            <label class="reward-select-item" data-id="alipay" data-alipay="/locqi.com/images/alipay_code.jpg">
+                <img class="reward-select-item-alipay" src="/locqi.com/images/alipay.png" alt="支付宝">
+            </label>
+            
+        </div>
+    </div>
+</div>
+
+
+        
+    </div>
+    <footer class="article-footer">
+        
+        
+<div class="post-share">
+    <a href="javascript:;" id="share-sub" class="post-share-fab">
+        <i class="fa fa-share-alt"></i>
+    </a>
+    <div class="post-share-list" id="share-list">
+        <ul class="share-icons">
+          <li>
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/&title=《使用Axis2实现WebService的发布和调用》 — Locqi&pic=https://locqi.github.io/locqi.comimages/logo.jpg" data-title="微博">
+              <i class="fa fa-weibo"></i>
+            </a>
+          </li>
+          <li>
+            <a class="weixin share-sns" id="wxFab" href="javascript:;" data-title="微信">
+              <i class="fa fa-weixin"></i>
+            </a>
+          </li>
+          <li>
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/&title=《使用Axis2实现WebService的发布和调用》 — Locqi&source=没有最好只有更好" data-title="QQ">
+              <i class="fa fa-qq"></i>
+            </a>
+          </li>
+          <li>
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/" data-title="Facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+          </li>
+          <li>
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Axis2实现WebService的发布和调用》 — Locqi&url=https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/&via=https://locqi.github.io/locqi.com" data-title="Twitter">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/" data-title="Google+">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        </ul>
+     </div>
+</div>
+<div class="post-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;" id="wxShare-close">×</a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/" alt="微信分享二维码">
+</div>
+
+<div class="mask"></div>
+
+        
+        <ul class="article-footer-menu">
+            
+            
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/locqi.com/tags/WebService技术/" class="color3">WebService技术</a>
+      
+  </li>
+
+        </ul>
+        
+    </footer>
+  </div>
+</article>
+
+
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一、Axis2简介："><span class="post-toc-text">一、Axis2简介：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二、Axis2的下载和安装："><span class="post-toc-text">二、Axis2的下载和安装：</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三、编写和发布WebService"><span class="post-toc-text">三、编写和发布WebService</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1、简单的pojo方式（无需配置）："><span class="post-toc-text">1、简单的pojo方式（无需配置）：</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2、打jar包的方式："><span class="post-toc-text">2、打jar包的方式：</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3、不打jar包的方式：（重点）"><span class="post-toc-text">3、不打jar包的方式：（重点）</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四、用Java实现调用WebService的客户端程序"><span class="post-toc-text">四、用Java实现调用WebService的客户端程序</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#五、用wsdl2java简化客户端的编写"><span class="post-toc-text">五、用wsdl2java简化客户端的编写</span></a></li></ol>
+        </nav>
+    </aside>
+    
+
+<nav id="article-nav">
+  
+    <a href="/locqi.com/2019/03/13/JavaList-DeepAndShallowCopy/" id="article-nav-newer" class="article-nav-link-wrap">
+
+      <span class="article-nav-title">
+        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
+        
+          java List复制：浅拷贝与深拷贝
+        
+      </span>
+    </a>
+  
+  
+    <a href="/locqi.com/2018/09/19/Maven-Detailed-%5B8%5D-Maven-Inheritance-and-aggregation/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">Maven详解（八）------ 继承和聚合</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
+  
+</nav>
+
+
+
+    
+        <section id="comments">
+            <div id="disqus_thread">
+                <script type="text/javascript">
+                    var disqus_shortname = 'Locqi';
+                    (function() {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+            </div>
+        </section>
+    
+</section>
+        
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+      <p>
+      <span class="footer__copyright">
+        &copy; 2020 Locqi - 本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+       
+    </span>
+    </br>
+    <span class="footer__copyright">
+             - 基于 <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> 搭建，使用 <a href="https://blog.minhow.com/ " target="_blank" rel="noopener">miho</a> 主题，由<a href="https://gitee.com/locqi " target="_blank" rel="noopener">@Locqi</a> 修改, 原创出自<a href="https://github.com/WongMinHo/hexo-theme-miho" target="_blank">WongMinHo</a>
+         </span>
+       
+    
+   
+      </p>     
+      
+    </div>
+  </div>
+  
+</footer>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  var mihoConfig = {
+      root: "https://locqi.github.io/locqi.com",
+      animate: true,
+      isHome: false,
+      share: true,
+      reward: 1
+  }
+</script>
+<div class="sidebar">
+    <div id="sidebar-search" title="Search">
+        <i class="fa fa-search"></i>
+    </div>
+    <div id="sidebar-category" title="Categories">
+        <i class="fa fa-book"></i>
+    </div>
+    <div id="sidebar-tag" title="Tags">
+        <i class="fa fa-tags"></i>
+    </div>
+    <div id="sidebar-top">
+        <span class="sidebar-top-icon"><i class="fa fa-angle-up"></i></span>
+    </div>
+</div>
+<div class="sidebar-menu-box" id="sidebar-menu-box">
+    <div class="sidebar-menu-box-container">
+        <div id="sidebar-menu-box-categories">
+            <a class="category-link" href="/locqi.com/categories/Java%E6%8A%80%E6%9C%AF/">Java技术</a><a class="category-link" href="/locqi.com/categories/Maven%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/">Maven系列教程</a><a class="category-link" href="/locqi.com/categories/Web%E6%9C%8D%E5%8A%A1/">Web服务</a><a class="category-link" href="/locqi.com/categories/iOS%E6%8A%80%E6%9C%AF/">iOS技术</a><a class="category-link" href="/locqi.com/categories/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">搭建博客</a>
+        </div>
+        <div id="sidebar-menu-box-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+    <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
+</div>
+<div class="mobile-header-menu-nav" id="mobile-header-menu-nav">
+    <div class="mobile-header-menu-container">
+        <span class="title">Menus</span>
+        <ul class="mobile-header-menu-navbar">
+            
+            <li>
+                <a  href="/locqi.com/">
+                    <i class="fa fa-home"></i><span>Home</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/archives">
+                    <i class="fa fa-archive"></i><span>Archives</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/favourite/time.html">
+                    <i class="fa fa-favourite"></i><span>Time Machine</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/locqi.com/aboutme">
+                    <i class="fa fa-user"></i><span>About</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="mobile-header-tag-container">
+        <span class="title">Tags</span>
+        <div id="mobile-header-container-tags">
+            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
+        </div>
+    </div>
+</div>
+<div class="search-wrap">
+    <span class="search-close">&times;</span>
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+            <i class="icon icon-lg icon-chevron-left"></i>
+        </a>
+        <input class="search-field" placeholder="Search..." id="keywords">
+        <a id="search-submit" href="javascript:;">
+            <i class="fa fa-search"></i>
+        </a>
+    <div class="search-container" id="search-container">
+        <ul class="search-result" id="search-result">
+        </ul>
+    </div>
+</div>
+
+<div id="search-tpl">
+    <li class="search-result-item">
+        <a href="{url}" class="search-item-li">
+            <span class="search-item-li-title" title="{title}">{title}</span>
+        </a>
+    </li>
+</div>
+
+<script src="/locqi.com/js/search.js"></script>
+
+
+<script src="/locqi.com/js/main.js"></script>
+
+
+
+  <script src="//cdn.bootcss.com/particles.js/2.0.0/particles.min.js"></script>
+  <div id="particles"></div>
+  
+<script src="/locqi.com/js/particles.js"></script>
+
+
+
+
+<script>
+  var disqus_shortname = 'Locqi';
+  
+  var disqus_url = 'https://locqi.github.io/locqi.com/2018/09/25/use-Axis2-build-webService/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+  
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+
+  <script src="//cdn.bootcss.com/scrollReveal.js/3.0.5/scrollreveal.js"></script>
+  
+<script src="/locqi.com/js/animate.js"></script>
+
+
+
+  
+<script src="/locqi.com/js/pop-img.js"></script>
+
+  <script>
+     $(".article-entry p img").popImg();
+  </script>
+
+  </div>
+</body>
+</html>

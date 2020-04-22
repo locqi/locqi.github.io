@@ -1,159 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html >
 <head>
-  <meta charset="utf-8">
-  
-  <title>快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务 | Locqi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-    <meta name="keywords" content="Locqi,Locqi's Blog" />
-  
-  <meta name="description" content="前言Web Service技术， 能使得运行在不同机器上的不同应用无须借助附加的、专门的第三方软件或硬件， 就可相互交换数据或集成。依据Web Service规范实施的应用之间， 无论它们所使用的语言、 平台或内部协议是什么， 都可以相互交换数据。Web Service是自描述、 自包含的可用网络模块， 可以执行具体的业务功能。Web Service也很容易部署， 因为它们基于一些常规的产业标准以">
-<meta property="og:type" content="article">
-<meta property="og:title" content="快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务">
-<meta property="og:url" content="https://locqi.github.io/locqi.com/2018/08/15/soap-ios/index.html">
-<meta property="og:site_name" content="Locqi">
-<meta property="og:description" content="前言Web Service技术， 能使得运行在不同机器上的不同应用无须借助附加的、专门的第三方软件或硬件， 就可相互交换数据或集成。依据Web Service规范实施的应用之间， 无论它们所使用的语言、 平台或内部协议是什么， 都可以相互交换数据。Web Service是自描述、 自包含的可用网络模块， 可以执行具体的业务功能。Web Service也很容易部署， 因为它们基于一些常规的产业标准以">
-<meta property="og:image" content="https://i.imgur.com/QpmODSk.png">
-<meta property="article:published_time" content="2018-08-15T00:56:11.000Z">
-<meta property="article:modified_time" content="2018-09-06T00:28:24.000Z">
-<meta property="article:author" content="Locqi">
-<meta property="article:tag" content="WebService技术">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.imgur.com/QpmODSk.png">
-  
-  
-    <link rel="icon" href="/favicon.jpg">
-  
-  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  
-<link rel="stylesheet" href="/locqi.com/css/style.css">
-
-  
-<script src="/locqi.com/js/pace.min.js"></script>
-
-  
-
-  
-  
-
-<meta name="generator" content="Hexo 4.2.0"></head>
-
-<body>
-  <div id="container">
-      <header id="header">
-    <div id="banner"></div>
-    <div id="header-outer">
-        <div id="header-menu" class="header-menu-pos animated">
-            <div class="header-menu-container">
-                <a href="/locqi.com/" class="left">
-                    <span class="site-title">Locqi&#39;s Blog</span>
-                </a>
-                <nav id="header-menu-nav" class="right">
-                    
-                    <a  href="/locqi.com/">
-                        <i class="fa fa-home"></i>
-                        <span>Home</span>
-                    </a>
-                    
-                    <a  href="/locqi.com/archives">
-                        <i class="fa fa-archive"></i>
-                        <span>Archives</span>
-                    </a>
-                    
-                    <a  href="/locqi.com/favourite/time.html">
-                        <i class="fa fa-favourite"></i>
-                        <span>Time Machine</span>
-                    </a>
-                    
-                    <a  href="/locqi.com/aboutme">
-                        <i class="fa fa-user"></i>
-                        <span>About</span>
-                    </a>
-                    
-                </nav>
-                <a class="mobile-header-menu-button">
-                    <i class="fa fa-bars"></i>
-                </a>
-            </div>
-        </div>
-        <div id="header-row">
-            <div id="logo">
-                <a href="/locqi.com/">
-                    <img src="/locqi.com/images/logo.jpg" alt="logo">
-                </a>
-            </div>
-            <div class="header-info">
-                <div id="header-title">
-                    
-                    <h2>
-                        Locqi&#39;s Blog
-                    </h2>
-                    
-                </div>
-                <div id="header-description">
-                    
-                    <h3>
-                        世间所有的相遇，都是久别重逢。
-                    </h3>
-                    
-                </div>
-            </div>
-            <nav class="header-nav">
-                <div class="social">
-                    
-                        <a title="Gitee" target="_blank" href="//gitee.com/locqi">
-                            <i class="fa fa-home fa-2x"></i></a>
-                    
-                        <a title="Github" target="_blank" href="//github.com/Locqi">
-                            <i class="fa fa-github fa-2x"></i></a>
-                    
-                        <a title="Weibo" target="_blank" href="//weibo.com/huhu359819176">
-                            <i class="fa fa-weibo fa-2x"></i></a>
-                    
-                </div>
-            </nav>
-        </div>
-    </div>
-</header>
-      <div class="outer">
-        <section id="main" class="body-wrap"><article id="post-soap-ios" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-inner">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     
-      <header class="article-header">
+    <title>快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务 | Locqi</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="没有最好&lt;br /&gt;只有更好">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务 | Locqi">
+    <meta name="twitter:description" content="没有最好&lt;br /&gt;只有更好">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务 | Locqi">
+    <meta property="og:description" content="没有最好&lt;br /&gt;只有更好">
+
+    
+    <meta name="author" content="Locqi">
+    
+    
+<link rel="stylesheet" href="/css/vno.css">
+
+    
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+
+    
+    <link rel="icon" href="/images/avatar-small.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+
+    <link rel="canonical" href="http://locqi.github.io/2018/08/15/soap-ios/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    
+<script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+
+    
+<script src="/js/main.js"></script>
+
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(/images/background-cover.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 Locqi 的主页"><img src="/images/avatar.jpg" width="80" alt="Locqi logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for Locqi">Locqi</a></h1>
         
+        <span class="panel-cover__subtitle panel-subtitle">世间所有的相遇，都是久别重逢。</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">没有最好<br />只有更好</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="Visit the blog" class="blog-button">Blog</a></li>
+            
+              <li class="navigation__item"><a href="/aboutme">关于我</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
   
-    <h1 class="post-title" itemprop="name">
-      快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务
-    </h1>
-    <div class="post-title-bar">
-      <ul>
-          
-              <li>
-                  <i class="fa fa-book"></i>
-                  
-                      <a href="/locqi.com/categories/Web服务/">Web服务</a>
-                  
-              </li>
-          
-        <li>
-          <i class="fa fa-calendar"></i>  2018-08-15
-        </li>
-        <li>
-          <i class="fa fa-eye"></i>
-          <span id="busuanzi_value_page_pv"></span>
-        </li>
-      </ul>
-    </div>
+  <li class="navigation__item">
+    <a href="http://weibo.com/huhu359819176" title="Weibo" target="_blank">
+      <i class='social fa fa-weibo'></i>
+      <span class="label">Weibo</span>
+    </a>
+  </li> 
+
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/Locqi" title="GitHub" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
   
 
-          
-      </header>
-    
-    <div class="article-entry post-content" itemprop="articleBody">
-      
-            
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Web Service技术， 能使得运行在不同机器上的不同应用无须借助附加的、专门的第三方软件或硬件， 就可相互交换数据或集成。依据Web Service规范实施的应用之间， 无论它们所使用的语言、 平台或内部协议是什么， 都可以相互交换数据。Web Service是自描述、 自包含的可用网络模块， 可以执行具体的业务功能。Web Service也很容易部署， 因为它们基于一些常规的产业标准以及已有的一些技术，诸如标准通用标记语言下的子集XML、HTTP。Web Service减少了应用接口的花费。Web Service为整个企业甚至多个组织之间的业务流程的集成提供了一个通用机制。</p>
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2018-08-15T00:56:11.000Z" class="post-list__meta--date date">2018-08-15</time> &#8226; <span class="post-meta__tags tags">于 
+  <a class="tag-link" href="/tags/WebService%E6%8A%80%E6%9C%AF/" rel="tag">WebService技术</a>
+ </span>
+      <span class="page-pv">
+       Read <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务</h1>
+  </header>
+
+  <section class="post">
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Web Service技术， 能使得运行在不同机器上的不同应用无须借助附加的、专门的第三方软件或硬件， 就可相互交换数据或集成。依据Web Service规范实施的应用之间， 无论它们所使用的语言、 平台或内部协议是什么， 都可以相互交换数据。Web Service是自描述、 自包含的可用网络模块， 可以执行具体的业务功能。Web Service也很容易部署， 因为它们基于一些常规的产业标准以及已有的一些技术，诸如标准通用标记语言下的子集XML、HTTP。Web Service减少了应用接口的花费。Web Service为整个企业甚至多个组织之间的业务流程的集成提供了一个通用机制。</p>
 <p>简单来说 Web Service 请求就是往服务器POST XML数据，然后服务器响应得到的也是XML数据；</p>
 <p>好了，概念性的东西就说到这里（需要了解更多详细内容，请自行问度娘）。</p>
 <blockquote>
@@ -187,349 +187,133 @@ soaprequest.SoapAction = [soaputility GetSoapActionByMethodName:methodName SoapT
         [self.result setText:response.description];        
     }];</code></pre>
 
-            <div class="post-copyright">
-    <div class="content">
-        <p>最后更新： 2018年09月06日 08:28</p>
-        <!--<p>原始链接： <a class="post-url" href="/locqi.com/2018/08/15/soap-ios/" title="快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务">https://locqi.github.io/locqi.com/2018/08/15/soap-ios/</a></p>-->
-        <footer>
-            <a href="https://locqi.github.io/locqi.com">
-                <img src="/locqi.com/images/logo.jpg" alt="Locqi">
-                Locqi
-            </a>
-        </footer>
-    </div>
-</div>
+  </section>
 
-      
-        
-            
-<div class="page-reward">
-    <a id="rewardBtn" href="javascript:;">赏</a>
-</div>
-
-<div id="reward" class="post-modal reward-lay">
-    <a class="close" href="javascript:;" id="reward-close">×</a>
-    <span class="reward-title">
-        <i class="icon icon-quote-left"></i>
-        请我吃糖~
-        <i class="icon icon-quote-right"></i>
-    </span>
-    <div class="reward-content">
-        
-        <div class="reward-code">
-            <img id="rewardCode" src="/locqi.com/images/wechat_code.jpg" alt="打赏二维码">
-        </div>
-        <div class="reward-select">
-            
-            <label class="reward-select-item checked" data-id="wechat" data-wechat="/locqi.com/images/wechat_code.jpg">
-                <img class="reward-select-item-wechat" src="/locqi.com/images/wechat.png" alt="微信">
-            </label>
-            
-            
-            <label class="reward-select-item" data-id="alipay" data-alipay="/locqi.com/images/alipay_code.jpg">
-                <img class="reward-select-item-alipay" src="/locqi.com/images/alipay.png" alt="支付宝">
-            </label>
-            
-        </div>
-    </div>
-</div>
-
-
-        
-    </div>
-    <footer class="article-footer">
-        
-        
-<div class="post-share">
-    <a href="javascript:;" id="share-sub" class="post-share-fab">
-        <i class="fa fa-share-alt"></i>
-    </a>
-    <div class="post-share-list" id="share-list">
-        <ul class="share-icons">
-          <li>
-            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://locqi.github.io/locqi.com/2018/08/15/soap-ios/&title=《快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务》 — Locqi&pic=https://locqi.github.io/locqi.comimages/logo.jpg" data-title="微博">
-              <i class="fa fa-weibo"></i>
-            </a>
-          </li>
-          <li>
-            <a class="weixin share-sns" id="wxFab" href="javascript:;" data-title="微信">
-              <i class="fa fa-weixin"></i>
-            </a>
-          </li>
-          <li>
-            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://locqi.github.io/locqi.com/2018/08/15/soap-ios/&title=《快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务》 — Locqi&source=没有最好只有更好" data-title="QQ">
-              <i class="fa fa-qq"></i>
-            </a>
-          </li>
-          <li>
-            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://locqi.github.io/locqi.com/2018/08/15/soap-ios/" data-title="Facebook">
-              <i class="fa fa-facebook"></i>
-            </a>
-          </li>
-          <li>
-            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务》 — Locqi&url=https://locqi.github.io/locqi.com/2018/08/15/soap-ios/&via=https://locqi.github.io/locqi.com" data-title="Twitter">
-              <i class="fa fa-twitter"></i>
-            </a>
-          </li>
-          <li>
-            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://locqi.github.io/locqi.com/2018/08/15/soap-ios/" data-title="Google+">
-              <i class="fa fa-google-plus"></i>
-            </a>
-          </li>
-        </ul>
-     </div>
-</div>
-<div class="post-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;" id="wxShare-close">×</a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://locqi.github.io/locqi.com/2018/08/15/soap-ios/" alt="微信分享二维码">
-</div>
-
-<div class="mask"></div>
-
-        
-        <ul class="article-footer-menu">
-            
-            
-  <li class="article-footer-tags">
-    <i class="fa fa-tags"></i>
-      
-    <a href="/locqi.com/tags/WebService技术/" class="color3">WebService技术</a>
-      
-  </li>
-
-        </ul>
-        
-    </footer>
-  </div>
 </article>
 
-
-    <aside class="post-toc-pos post-toc-top" id="post-toc">
-        <nav class="post-toc-wrap">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#前言"><span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#环境部署"><span class="post-toc-text">环境部署</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#IOS-SOAP的使用方法"><span class="post-toc-text">IOS SOAP的使用方法:</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-引用KissXML（具体如何在项目中添加KissXML，这里就不写了）。"><span class="post-toc-text">1.引用KissXML（具体如何在项目中添加KissXML，这里就不写了）。</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-将服务的WebService的wsdl文件添加到项目中"><span class="post-toc-text">2.将服务的WebService的wsdl文件添加到项目中</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-获取soap信封"><span class="post-toc-text">3.获取soap信封</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#4-获取soapAction"><span class="post-toc-text">4.获取soapAction</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#5-得到了soap信封和SoapAction，就可以用使用http-post-来提交了。"><span class="post-toc-text">5.得到了soap信封和SoapAction，就可以用使用http post 来提交了。</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#接下来运行项目，看结果"><span class="post-toc-text">接下来运行项目，看结果!</span></a></li></ol></li></ol>
-        </nav>
-    </aside>
+<section class="read-more">
+           
     
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">Newer Post</span>
+                <h2 class="post-list__post-title post-title"><a href="/2018/08/16/soapui-use/" title="soapUI的安装和使用（基于请求国内手机号码归属地查询WEB服务）">soapUI的安装和使用（基于请求国内手机号码归属地查询WEB服务）</a></h2>
+                <p class="excerpt">
+                
+                前言soapUI是一款用来模拟webService客户端的软件，使用soapUI可以更方便的解析webService服务对外公布的类和方法。使用soapUI还可以进行压力测试等。接下来小编介绍下soapUI的基本使用方法，方便网友们及时上手。
 
-<nav id="article-nav">
-  
-    <a href="/locqi.com/2018/08/16/soapui-use/" id="article-nav-newer" class="article-nav-link-wrap">
+下面进入正题：
 
-      <span class="article-nav-title">
-        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
-        
-          soapUI的安装和使用（基于请求国内手机号码归属地查询WEB服务）
-        
-      </span>
-    </a>
-  
-  
-    <a href="/locqi.com/2018/08/14/git-hexo/" id="article-nav-older" class="article-nav-link-wrap">
-      <span class="article-nav-title">使用github＋hexo搭建静态blog</span>
-      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
-    </a>
-  
-</nav>
-
-
-
-    
-        <section id="comments">
-            <div id="disqus_thread">
-                <script type="text/javascript">
-                    var disqus_shortname = 'Locqi';
-                    (function() {
-                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-                    })();
-                </script>
-                <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+下载安装soapUI软件在浏览器ur
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2018-08-16T01:26:16.000Z" class="post-list__meta--date date">2018-08-16</time> &#8226; <span class="post-list__meta--tags tags">于 
+  <a class="tag-link" href="/tags/WebService%E6%8A%80%E6%9C%AF/" rel="tag">WebService技术</a>
+</span><a class="btn-border-small" href="/2018/08/16/soapui-use/">继续阅读</a></div>
+                           
             </div>
-        </section>
-    
-</section>
         
-      </div>
-      <footer id="footer">
-  <div class="outer">
-    <div id="footer-info" class="inner">
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">Older Post</span>
+                <h2 class="post-list__post-title post-title"><a href="/2018/08/14/git-hexo/" title="使用github＋hexo搭建静态blog">使用github＋hexo搭建静态blog</a></h2>
+                <p class="excerpt">
+                
+                环境部署需要安装以下内容：
+
+git
+Node.js
+hexo
+
+hexo官网资料参考链接
+使用brew安装npm （Node.js 的模块依赖管理工具）
+1brew install npm
+
+安装git
+1brew install git
+git搭建blog官网资料参考链接新建git仓库作为静态网
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2018-08-14T06:56:11.000Z" class="post-list__meta--date date">2018-08-14</time> &#8226; <span class="post-list__meta--tags tags">于 
+  <a class="tag-link" href="/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" rel="tag">搭建个人博客</a>
+</span><a class="btn-border-small" href="/2018/08/14/git-hexo/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+  
+<section class="post-comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = 'Locqi'; 
       
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
+  var disqus_identifier = '/2018/08/15/soap-ios/';
+  var disqus_title = '快速使用 SOAP-IOS 请求 国内手机号码归属地查询WEB服务';
+  var disqus_url = 'http://locqi.github.io/2018/08/15/soap-ios/';
+  
+
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          //dsq.src = 'https://' + disqus_shortname + '.disqus.com/embed.js';
+          dsq.src = 'https://a.disquscdn.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+  <a href="https://disqus.com" target="_blank" rel="noopener" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
 
 
-      <p>
-      <span class="footer__copyright">
+            <footer class="footer">
+    <span class="footer__copyright">
         &copy; 2020 Locqi - 本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
        
     </span>
-    </br>
     <span class="footer__copyright">
-             - 基于 <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> 搭建，使用 <a href="https://blog.minhow.com/ " target="_blank" rel="noopener">miho</a> 主题，由<a href="https://gitee.com/locqi " target="_blank" rel="noopener">@Locqi</a> 修改, 原创出自<a href="https://github.com/WongMinHo/hexo-theme-miho" target="_blank">WongMinHo</a>
+             - 基于 <a href="http://hexo.io" target="_blank" rel="noopener">Hexo</a> 搭建，使用 <a href="https://github.com/monniya/hexo-theme-new-vno " target="_blank" rel="noopener">new-vno</a> 主题，由<a href="https://monniya.com " target="_blank" rel="noopener">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
          </span>
        
     
-   
-      </p>     
-      
-    </div>
-  </div>
-  
+    
 </footer>
-    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+
+        </div>
+    </div>
+
+     
 <script>
-  var mihoConfig = {
-      root: "https://locqi.github.io/locqi.com",
-      animate: true,
-      isHome: false,
-      share: true,
-      reward: 1
-  }
-</script>
-<div class="sidebar">
-    <div id="sidebar-search" title="Search">
-        <i class="fa fa-search"></i>
-    </div>
-    <div id="sidebar-category" title="Categories">
-        <i class="fa fa-book"></i>
-    </div>
-    <div id="sidebar-tag" title="Tags">
-        <i class="fa fa-tags"></i>
-    </div>
-    <div id="sidebar-top">
-        <span class="sidebar-top-icon"><i class="fa fa-angle-up"></i></span>
-    </div>
-</div>
-<div class="sidebar-menu-box" id="sidebar-menu-box">
-    <div class="sidebar-menu-box-container">
-        <div id="sidebar-menu-box-categories">
-            <a class="category-link" href="/locqi.com/categories/Java%E6%8A%80%E6%9C%AF/">Java技术</a><a class="category-link" href="/locqi.com/categories/Maven%E7%B3%BB%E5%88%97%E6%95%99%E7%A8%8B/">Maven系列教程</a><a class="category-link" href="/locqi.com/categories/Web%E6%9C%8D%E5%8A%A1/">Web服务</a><a class="category-link" href="/locqi.com/categories/iOS%E6%8A%80%E6%9C%AF/">iOS技术</a><a class="category-link" href="/locqi.com/categories/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/">搭建博客</a>
-        </div>
-        <div id="sidebar-menu-box-tags">
-            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
-        </div>
-    </div>
-    <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
-</div>
-<div class="mobile-header-menu-nav" id="mobile-header-menu-nav">
-    <div class="mobile-header-menu-container">
-        <span class="title">Menus</span>
-        <ul class="mobile-header-menu-navbar">
-            
-            <li>
-                <a  href="/locqi.com/">
-                    <i class="fa fa-home"></i><span>Home</span>
-                </a>
-            </li>
-            
-            <li>
-                <a  href="/locqi.com/archives">
-                    <i class="fa fa-archive"></i><span>Archives</span>
-                </a>
-            </li>
-            
-            <li>
-                <a  href="/locqi.com/favourite/time.html">
-                    <i class="fa fa-favourite"></i><span>Time Machine</span>
-                </a>
-            </li>
-            
-            <li>
-                <a  href="/locqi.com/aboutme">
-                    <i class="fa fa-user"></i><span>About</span>
-                </a>
-            </li>
-            
-        </ul>
-    </div>
-    <div class="mobile-header-tag-container">
-        <span class="title">Tags</span>
-        <div id="mobile-header-container-tags">
-            <a href="/locqi.com/tags/CocoaPods/" style="font-size: 10px;">CocoaPods</a> <a href="/locqi.com/tags/List%E5%A4%8D%E5%88%B6/" style="font-size: 10px;">List复制</a> <a href="/locqi.com/tags/Maven%E6%8A%80%E6%9C%AF/" style="font-size: 20px;">Maven技术</a> <a href="/locqi.com/tags/OTA-Install-APP/" style="font-size: 10px;">OTA Install APP</a> <a href="/locqi.com/tags/SSL-pinning/" style="font-size: 10px;">SSL pinning</a> <a href="/locqi.com/tags/Struts2/" style="font-size: 10px;">Struts2</a> <a href="/locqi.com/tags/WebService%E6%8A%80%E6%9C%AF/" style="font-size: 16.67px;">WebService技术</a> <a href="/locqi.com/tags/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" style="font-size: 13.33px;">搭建个人博客</a>
-        </div>
-    </div>
-</div>
-<div class="search-wrap">
-    <span class="search-close">&times;</span>
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-            <i class="icon icon-lg icon-chevron-left"></i>
-        </a>
-        <input class="search-field" placeholder="Search..." id="keywords">
-        <a id="search-submit" href="javascript:;">
-            <i class="fa fa-search"></i>
-        </a>
-    <div class="search-container" id="search-container">
-        <ul class="search-result" id="search-result">
-        </ul>
-    </div>
-</div>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-<div id="search-tpl">
-    <li class="search-result-item">
-        <a href="{url}" class="search-item-li">
-            <span class="search-item-li-title" title="{title}">{title}</span>
-        </a>
-    </li>
-</div>
-
-<script src="/locqi.com/js/search.js"></script>
-
-
-<script src="/locqi.com/js/main.js"></script>
-
-
-
-  <script src="//cdn.bootcss.com/particles.js/2.0.0/particles.min.js"></script>
-  <div id="particles"></div>
-  
-<script src="/locqi.com/js/particles.js"></script>
-
-
-
-
-<script>
-  var disqus_shortname = 'Locqi';
-  
-  var disqus_url = 'https://locqi.github.io/locqi.com/2018/08/15/soap-ios/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
+	ga('create', 'UA-78918255-1', 'auto');
+	ga('send', 'pageview');
 </script>
 
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?9cdad07c755fa23f6aced510c6760e87";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
 
 
 
-
-  
-<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
-
-  <script src="//cdn.bootcss.com/scrollReveal.js/3.0.5/scrollreveal.js"></script>
-  
-<script src="/locqi.com/js/animate.js"></script>
-
-
-
-  
-<script src="/locqi.com/js/pop-img.js"></script>
-
-  <script>
-     $(".article-entry p img").popImg();
-  </script>
-
-  </div>
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
 </body>
 </html>
